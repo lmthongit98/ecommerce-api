@@ -1,0 +1,36 @@
+package com.project.shopapp.models;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Entity
+@Table(name = "products")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Product extends BaseEntity {
+
+    @Column(name = "name", nullable = false, length = 350)
+    private String name;
+
+    private Float price;
+
+    @Column(name = "thumbnail", length = 300)
+    private String thumbnail;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "active")
+    private Boolean active = Boolean.TRUE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+}
