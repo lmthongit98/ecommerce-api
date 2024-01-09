@@ -1,4 +1,4 @@
-package com.project.shopapp.commons.constants;
+package com.project.shopapp.constants;
 
 public class AppConstants {
 

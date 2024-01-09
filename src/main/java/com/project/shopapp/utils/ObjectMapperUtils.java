@@ -1,4 +1,4 @@
-package com.project.shopapp.commons.utils;
+package com.project.shopapp.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

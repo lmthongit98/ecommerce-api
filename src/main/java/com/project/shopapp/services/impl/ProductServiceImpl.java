@@ -1,7 +1,7 @@
 package com.project.shopapp.services.impl;
 
-import com.project.shopapp.commons.mappers.ProductMapper;
-import com.project.shopapp.commons.utils.PageableUtils;
+import com.project.shopapp.mappers.ProductMapper;
+import com.project.shopapp.utils.PageableUtils;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.dtos.responses.ResponseDto;

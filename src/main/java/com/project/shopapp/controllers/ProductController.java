@@ -1,6 +1,6 @@
 package com.project.shopapp.controllers;
 
-import com.project.shopapp.commons.constants.AppConstants;
+import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.dtos.responses.ResponseDto;
