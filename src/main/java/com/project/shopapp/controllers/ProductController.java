@@ -1,5 +1,6 @@
 package com.project.shopapp.controllers;
 
+import com.github.javafaker.Faker;
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
@@ -64,6 +65,30 @@ public class ProductController {
     public ResponseEntity<?> deleteItemById(@PathVariable("id") Long productId) {
         productService.deleteProductById(productId);
         return ResponseEntity.ok(String.format("Product with id = %d deleted successfully", productId));
+    }
+
+    @PostMapping("/generateFakeProducts")
+    private ResponseEntity<String> generateFakeProducts() {
+        Faker faker = new Faker();
+        for (int i = 0; i < 1_000; i++) {
+            String productName = faker.commerce().productName();
+            if (productService.existsByName(productName)) {
+                continue;
+            }
+            ProductRequestDto productDTO = ProductRequestDto.builder()
+                    .name(productName)
+                    .price((float) faker.number().numberBetween(10, 90_000_000))
+                    .description(faker.lorem().sentence())
+                    .thumbnail("")
+                    .categoryId((long) faker.number().numberBetween(1, 4))
+                    .build();
+            try {
+                productService.createProduct(productDTO);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }
+        return ResponseEntity.ok("Fake Products created successfully");
     }
 
 }

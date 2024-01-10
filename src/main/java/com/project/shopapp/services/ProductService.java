@@ -14,4 +14,6 @@ public interface ProductService {
     ProductResponseDto updateProduct(Long productId, ProductRequestDto productRequestDto);
 
     void deleteProductById(Long productId);
+
+    boolean existsByName(String productName);
 }

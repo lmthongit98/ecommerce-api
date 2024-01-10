@@ -65,6 +65,11 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    @Override
+    public boolean existsByName(String productName) {
+        return productRepository.existsByName(productName);
+    }
+
     private Product findProductById(Long productId) {
         return productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product", productId));
     }
