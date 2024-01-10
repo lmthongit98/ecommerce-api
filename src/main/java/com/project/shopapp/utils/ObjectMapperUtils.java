@@ -23,7 +23,7 @@ public class ObjectMapperUtils {
      * @param <E>         The type of the source entity.
      * @return The converted object of type C.
      */
-    public <C,E> C convertEntityAndDto(final E entity, Class<C> outputClass){
+    public <C,E> C mapToEntityOrDto(final E entity, Class<C> outputClass){
         return mapper.map(entity, outputClass);
     }
 
@@ -35,7 +35,7 @@ public class ObjectMapperUtils {
      * @param <E>    The type of the target entity.
      * @param <D>    The type of the source DTO.
      */
-    public <E, D> void convertToPersistedEntityFromDto(final E entity, final D dto){
+    public <E, D> void mapToPersistedEntity(final E entity, final D dto){
         mapper.map(dto, entity);
     }
 
@@ -50,7 +50,7 @@ public class ObjectMapperUtils {
      */
     public <C,E> List<C> mapAll(final Collection<? extends E> input, final Class<C> outputClass){
         return input.stream().map(
-                entity -> convertEntityAndDto(entity, outputClass)
+                entity -> mapToEntityOrDto(entity, outputClass)
         ).collect(Collectors.toList());
     }
 

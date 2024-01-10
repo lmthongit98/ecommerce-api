@@ -21,18 +21,18 @@ public class ProductMapper {
     }
 
     public Product mapToEntity(ProductRequestDto productRequestDto, Category category) {
-        Product product = objectMapperUtils.convertEntityAndDto(productRequestDto, Product.class);
+        Product product = objectMapperUtils.mapToEntityOrDto(productRequestDto, Product.class);
         product.setCategory(category);
         return product;
     }
 
     public void mapToEntity(Product product, ProductRequestDto productRequestDto, Category category) {
         product.setCategory(category);
-        objectMapperUtils.convertToPersistedEntityFromDto(product, productRequestDto);
+        objectMapperUtils.mapToPersistedEntity(product, productRequestDto);
     }
 
     public ProductResponseDto mapToDto(Product product) {
-        ProductResponseDto productResponseDto = objectMapperUtils.convertEntityAndDto(product, ProductResponseDto.class);
+        ProductResponseDto productResponseDto = objectMapperUtils.mapToEntityOrDto(product, ProductResponseDto.class);
         productResponseDto.setCategoryId(product.getCategory().getId());
         return productResponseDto;
     }
