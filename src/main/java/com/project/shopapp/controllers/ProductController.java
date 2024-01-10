@@ -3,7 +3,7 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
-import com.project.shopapp.dtos.responses.ResponseDto;
+import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ public class ProductController {
             @RequestParam(value = "sort_by", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sort_dir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
-        ResponseDto<ProductResponseDto> responseDto = productService.getProducts(categoryId, searchKey, pageNo, pageSize, sortBy, sortDir);
-        return ResponseEntity.ok(responseDto);
+        PagingResponseDto<ProductResponseDto> pagingResponseDto = productService.getProducts(categoryId, searchKey, pageNo, pageSize, sortBy, sortDir);
+        return ResponseEntity.ok(pagingResponseDto);
     }
 
     @GetMapping("/{id}")

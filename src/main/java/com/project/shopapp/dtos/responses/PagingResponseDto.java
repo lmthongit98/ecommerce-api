@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseDto<T> {
+public class PagingResponseDto<T> {
     private List<T> content;
     private int pageNo;
     private int pageSize;
@@ -18,7 +18,7 @@ public class ResponseDto<T> {
     private int totalPages;
     private boolean last;
 
-    public ResponseDto(Page<?> page, List<T> content) {
+    public PagingResponseDto(Page<?> page, List<T> content) {
         this.content = content;
         this.pageNo = page.getNumber();
         this.pageSize = page.getSize();
