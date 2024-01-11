@@ -1,15 +1,18 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.responses.ApiErrorResponse;
+import com.project.shopapp.exceptions.BadRequestException;
+import com.project.shopapp.exceptions.DuplicateException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class GlobalExceptionController {
@@ -35,21 +38,29 @@ public class GlobalExceptionController {
 //        return ResponseEntity.status(BAD_REQUEST).body(new ApiErrorResponse(BAD_REQUEST.value(), message));
 //    }
 
-//    @ExceptionHandler(BadCredentialsException.class)
-//    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException() {
-//        return ResponseEntity.status(UNAUTHORIZED)
-//                .body(new ApiErrorResponse(UNAUTHORIZED.value(), "Invalid username or password"));
-//    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadRequestException(BadRequestException e) {
+        logger.error("BadRequestException", e);
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(new ApiErrorResponse(BAD_REQUEST.value(), e.getMessage()));
+    }
 
-//    @ExceptionHandler(DuplicateException.class)
-//    public ResponseEntity<ApiErrorResponse> handleDuplicateException(DuplicateException e) {
-//        return ResponseEntity.status(CONFLICT).body(new ApiErrorResponse(CONFLICT.value(), e.getMessage()));
-//    }
 
-//    @ExceptionHandler(InternalAuthenticationServiceException.class)
-//    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException e) {
-//        return ResponseEntity.status(UNAUTHORIZED).body(new ApiErrorResponse(UNAUTHORIZED.value(), e.getMessage()));
-//    }
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadCredentialsException() {
+        return ResponseEntity.status(UNAUTHORIZED)
+                .body(new ApiErrorResponse(UNAUTHORIZED.value(), "Invalid username or password"));
+    }
+
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<ApiErrorResponse> handleDuplicateException(DuplicateException e) {
+        return ResponseEntity.status(CONFLICT).body(new ApiErrorResponse(CONFLICT.value(), e.getMessage()));
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ApiErrorResponse> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException e) {
+        return ResponseEntity.status(UNAUTHORIZED).body(new ApiErrorResponse(UNAUTHORIZED.value(), e.getMessage()));
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnknownException(Exception e) {
