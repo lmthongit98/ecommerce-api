@@ -34,7 +34,7 @@ public class Role extends BaseEntity {
         permission.getRoles().add(this);
     }
 
-    public void removeProgram(Permission permission) {
+    public void removePermission(Permission permission) {
         this.permissions.remove(permission);
         permission.getRoles().remove(this);
     }
