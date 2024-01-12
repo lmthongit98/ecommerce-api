@@ -9,7 +9,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect
@@ -22,3 +22,19 @@ jwt:
   jwt-expiration-milliseconds: 2592000 #30 days = 30 * 24 * 60 * 60
   expiration-refresh-token: 5184000 #60 days = 60 * 24 * 60 * 60
   secretKey: TaqlmGv1iEDMRiFp/pHuID1+T84IABfuA0xXh4GhiUI=
+
+api:
+  prefix: /api/v1
+
+logging:
+  level:
+    org:
+      springframework.security: DEBUG
+
+# swagger-ui custom path
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+  show-actuator: true
