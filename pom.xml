@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.project</groupId>
-    <artifactId>shopapp</artifactId>
+    <artifactId>ecommerce-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>shopapp</name>
-    <description>Shop App APIs</description>
+    <name>ecommerce-api</name>
+    <description>Ecommerce APIs</description>
     <properties>
         <java.version>17</java.version>
         <spring-doc.version>2.2.0</spring-doc.version>
