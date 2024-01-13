@@ -43,10 +43,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain)
             throws IOException, ServletException {
         try {
-            if (isBypassToken(request)) {
-                filterChain.doFilter(request, response); //enable bypass
-                return;
-            }
             final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 response.sendError(
@@ -76,6 +72,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             response.getWriter().write(toJson(errorResponse));
         }
 
+    }
+
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+        return isBypassToken(request);
     }
 
     private String toJson(ApiErrorResponse response) {
