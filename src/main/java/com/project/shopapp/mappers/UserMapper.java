@@ -1,6 +1,7 @@
 package com.project.shopapp.mappers;
 
 import com.project.shopapp.dtos.requests.SignupRequestDto;
+import com.project.shopapp.dtos.responses.UserResponseDto;
 import com.project.shopapp.models.Role;
 import com.project.shopapp.models.User;
 import com.project.shopapp.utils.ObjectMapperUtils;
@@ -20,5 +21,7 @@ public class UserMapper {
         return user;
     }
 
-
+    public UserResponseDto mapToDto(User user) {
+        return objectMapperUtils.mapToEntityOrDto(user, UserResponseDto.class);
+    }
 }

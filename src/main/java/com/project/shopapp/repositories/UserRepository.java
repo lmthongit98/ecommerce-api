@@ -16,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT p FROM User u JOIN u.role r JOIN r.permissions p WHERE u.phoneNumber = :phoneNumber")
     List<Permission> findAllPermissions(String phoneNumber);
 
+    @Query("SELECT u FROM User u JOIN FETCH u.role r LEFT JOIN FETCH r.permissions WHERE u.phoneNumber = :phoneNumber")
+    Optional<User> findUserWithRoleAndPermissions(String phoneNumber);
+
 }

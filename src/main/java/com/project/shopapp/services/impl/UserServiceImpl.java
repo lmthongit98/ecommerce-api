@@ -3,6 +3,7 @@ package com.project.shopapp.services.impl;
 import com.project.shopapp.dtos.requests.SignupRequestDto;
 import com.project.shopapp.dtos.requests.UserLoginDto;
 import com.project.shopapp.dtos.responses.LoginResponseDto;
+import com.project.shopapp.dtos.responses.UserResponseDto;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.DuplicateException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
@@ -16,6 +17,7 @@ import com.project.shopapp.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,13 @@ public class UserServiceImpl implements UserService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.phoneNumber(), userLoginDto.password()));
         String token = jwtUtil.generateToken(userLoginDto.phoneNumber());
         return new LoginResponseDto(token);
+    }
+
+    @Override
+    public UserResponseDto getUserDetails(Authentication authentication) {
+        String phoneNumber = ((User) authentication.getPrincipal()).getPhoneNumber();
+        User user = userRepository.findUserWithRoleAndPermissions(phoneNumber).orElseThrow(() -> new ResourceNotFoundException("User could not be found with phone number: " + phoneNumber));
+        return userMapper.mapToDto(user);
     }
 
 }
