@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class SignupCompleteEventListener implements ApplicationListener<SignupCo
     private final UserService userService;
 
     @Override
+    @Async
     public void onApplicationEvent(@NonNull SignupCompleteEvent event) {
         log.info("Listen signup event {}", event);
         User user = event.getUser();
