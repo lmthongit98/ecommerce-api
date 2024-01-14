@@ -52,6 +52,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers(
                                         String.format("%s/users/signup", apiPrefix),
+                                        String.format("%s/users/verifyEmail", apiPrefix),
                                         String.format("%s/users/login", apiPrefix),
                                         String.format("%s/healthcheck/**", apiPrefix),
                                         "/api-docs",

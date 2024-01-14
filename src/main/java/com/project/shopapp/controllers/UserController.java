@@ -4,15 +4,20 @@ import com.project.shopapp.dtos.requests.SignupRequestDto;
 import com.project.shopapp.dtos.requests.UserLoginDto;
 import com.project.shopapp.dtos.responses.LoginResponseDto;
 import com.project.shopapp.dtos.responses.UserResponseDto;
+import com.project.shopapp.event.SignupCompleteEvent;
+import com.project.shopapp.models.User;
 import com.project.shopapp.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.util.List;
 
@@ -22,6 +27,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ApplicationEventPublisher publisher;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult result) {
@@ -29,7 +35,8 @@ public class UserController {
             List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
             return ResponseEntity.badRequest().body(errorMessages);
         }
-        userService.signup(requestDto);
+        User user = userService.signup(requestDto);
+        publisher.publishEvent(new SignupCompleteEvent(user, getVerifyEmailUrl()));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -47,6 +54,16 @@ public class UserController {
     public ResponseEntity<?> getUserDetails(Authentication authentication) {
         UserResponseDto userResponseDto = userService.getUserDetails(authentication);
         return ResponseEntity.ok(userResponseDto);
+    }
+
+    @GetMapping("/verifyEmail")
+    public ResponseEntity<?> verifyEmail(@RequestParam("token") String token) {
+        String result = userService.verifyToken(token);
+        return ResponseEntity.ok(result);
+    }
+
+    private String getVerifyEmailUrl() {
+        return MvcUriComponentsBuilder.fromMethodName(UserController.class, "verifyEmail", "").build().toUriString();
     }
 
 }

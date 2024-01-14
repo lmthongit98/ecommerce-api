@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "is_active")
-    private Boolean active = Boolean.TRUE;
+    private boolean active;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
