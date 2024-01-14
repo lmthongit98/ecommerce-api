@@ -23,8 +23,8 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "fullname", length = 100)
     private String fullName;
 
-    @Column(name = "phone_number", length = 10, nullable = false)
-    private String phoneNumber;
+    @Column(name = "email", length = 50, nullable = false)
+    private String email;
 
     @Column(name = "address", length = 200)
     private String address;
@@ -57,7 +57,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return phoneNumber;
+        return email;
     }
 
     @Override

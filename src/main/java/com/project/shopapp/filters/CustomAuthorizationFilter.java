@@ -49,7 +49,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         String method = request.getMethod();
         if (authentication.getPrincipal() instanceof User user) {
-            List<Permission> permissions = userRepository.findAllPermissions(user.getPhoneNumber());
+            List<Permission> permissions = userRepository.findAllPermissions(user.getEmail());
             for (Permission permission : permissions) {
                 if (!permission.getMethod().name().equals(method)) {
                     continue;

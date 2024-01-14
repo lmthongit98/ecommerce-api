@@ -15,8 +15,8 @@ public class UserResponseDto {
     @JsonProperty("fullname")
     private String fullName;
 
-    @JsonProperty("phone_number")
-    private String phoneNumber;
+    @JsonProperty("email")
+    private String email;
 
     @JsonProperty("address")
     private String address;

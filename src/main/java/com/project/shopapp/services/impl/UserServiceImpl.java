@@ -34,9 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void signup(SignupRequestDto signupRequestDto) {
-        String phoneNumber = signupRequestDto.getPhoneNumber();
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new DuplicateException("Phone number is already exist!");
+        String email = signupRequestDto.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            throw new DuplicateException("Email is already exist!");
         }
         Role userRole = roleRepository.findByName(Role.USER).orElseThrow(() -> new ResourceNotFoundException("User role could not be found"));
         if (!signupRequestDto.getPassword().equals(signupRequestDto.getRetypePassword())) {
@@ -49,15 +49,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDto login(UserLoginDto userLoginDto) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.phoneNumber(), userLoginDto.password()));
-        String token = jwtUtil.generateToken(userLoginDto.phoneNumber());
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.email(), userLoginDto.password()));
+        String token = jwtUtil.generateToken(userLoginDto.email());
         return new LoginResponseDto(token);
     }
 
     @Override
     public UserResponseDto getUserDetails(Authentication authentication) {
-        String phoneNumber = ((User) authentication.getPrincipal()).getPhoneNumber();
-        User user = userRepository.findUserWithRoleAndPermissions(phoneNumber).orElseThrow(() -> new ResourceNotFoundException("User could not be found with phone number: " + phoneNumber));
+        String email = ((User) authentication.getPrincipal()).getEmail();
+        User user = userRepository.findUserWithRoleAndPermissions(email).orElseThrow(() -> new ResourceNotFoundException("User could not be found with email: " + email));
         return userMapper.mapToDto(user);
     }
 

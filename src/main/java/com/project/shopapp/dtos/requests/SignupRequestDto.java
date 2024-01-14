@@ -1,6 +1,7 @@
 package com.project.shopapp.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,9 +15,10 @@ public class SignupRequestDto {
     @JsonProperty("fullname")
     private String fullName;
 
-    @JsonProperty("phone_number")
-    @NotBlank(message = "Phone number is required")
-    private String phoneNumber;
+    @JsonProperty("email")
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Invalid email format")
+    private String email;
 
     private String address;
 
