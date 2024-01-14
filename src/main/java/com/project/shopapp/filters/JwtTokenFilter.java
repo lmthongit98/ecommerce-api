@@ -2,8 +2,9 @@ package com.project.shopapp.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.shopapp.dtos.responses.ApiErrorResponse;
+import com.project.shopapp.exceptions.AccessDeniedException;
 import com.project.shopapp.models.User;
-import com.project.shopapp.utils.JwtUtil;
+import com.project.shopapp.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private String apiPrefix;
 
     private final UserDetailsService userDetailsService;
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
 
 
@@ -51,10 +51,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
             final String token = authHeader.substring(7);
-            final String username = jwtUtil.extractUsername(token);
+            final String username = jwtUtils.extractUsername(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 User userDetails = (User) userDetailsService.loadUserByUsername(username);
-                if (jwtUtil.validateToken(token, userDetails)) {
+                if (jwtUtils.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
@@ -67,8 +67,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response); //enable bypass
         } catch (AccessDeniedException e) {
-            ApiErrorResponse errorResponse = new ApiErrorResponse(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            ApiErrorResponse errorResponse = new ApiErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(toJson(errorResponse));
         }
 
@@ -97,6 +97,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/categories**", apiPrefix), "GET"),
                 Pair.of(String.format("%s/users/signup", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/verifyEmail", apiPrefix), "GET"),
+                Pair.of(String.format("%s/users/refreshToken", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/refreshToken", apiPrefix), "POST"),
 

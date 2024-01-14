@@ -27,11 +27,11 @@ public class UserResponseDto {
     @JsonProperty("date_of_birth")
     private Date dateOfBirth;
 
-    @JsonProperty("facebook_account_id")
-    private int facebookAccountId;
-
-    @JsonProperty("google_account_id")
-    private int googleAccountId;
+//    @JsonProperty("facebook_account_id")
+//    private int facebookAccountId;
+//
+//    @JsonProperty("google_account_id")
+//    private int googleAccountId;
 
     private RoleResponseDto role;
 

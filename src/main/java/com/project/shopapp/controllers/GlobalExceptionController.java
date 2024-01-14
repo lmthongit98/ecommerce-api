@@ -4,6 +4,7 @@ import com.project.shopapp.dtos.responses.ApiErrorResponse;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.DuplicateException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
+import com.project.shopapp.exceptions.TokenRefreshException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,13 @@ public class GlobalExceptionController {
     public ResponseEntity<ApiErrorResponse> handleNotFoundException(ResourceNotFoundException e) {
         logger.error("ResourceNotFoundException", e);
         return ResponseEntity.status(NOT_FOUND).body(new ApiErrorResponse(NOT_FOUND.value(), e.getMessage()));
+    }
+
+    @ExceptionHandler(value = TokenRefreshException.class)
+    public ResponseEntity<ApiErrorResponse> handleTokenRefreshException(TokenRefreshException e) {
+        logger.error("TokenRefreshException", e);
+        return ResponseEntity.status(FORBIDDEN).body(new ApiErrorResponse(FORBIDDEN.value(), e.getMessage()));
+
     }
 
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
