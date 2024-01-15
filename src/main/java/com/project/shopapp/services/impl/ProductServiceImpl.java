@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDto getProductById(Long productId) {
-        Product product = findProductById(productId);
+        Product product = productRepository.findProductWithImagesById(productId).orElseThrow(() -> new ResourceNotFoundException("Product", productId));
         return productMapper.mapToDto(product);
     }
 
@@ -138,10 +138,10 @@ public class ProductServiceImpl implements ProductService {
             existingProduct.setThumbnail(imageName);
         }
         productRepository.save(existingProduct);
-        productImageRepository.save(newProductImage);
+        var savedProductImage = productImageRepository.save(newProductImage);
         return ProductImageDto.builder()
                 .imageUrl(FileService.getImageUrl(imageName))
-                .productId(existingProduct.getId())
+                .productImageId(savedProductImage.getId())
                 .build();
     }
 

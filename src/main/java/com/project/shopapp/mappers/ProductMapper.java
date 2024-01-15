@@ -1,6 +1,7 @@
 package com.project.shopapp.mappers;
 
 import com.project.shopapp.dtos.requests.ProductRequestDto;
+import com.project.shopapp.dtos.responses.ProductImageDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.models.Product;
@@ -39,6 +40,9 @@ public class ProductMapper {
         if (StringUtils.hasText(product.getThumbnail())) {
             productResponseDto.setThumbnail(FileService.getImageUrl(product.getThumbnail()));
         }
+        List<ProductImageDto> productImages = product.getProductImages().stream().map
+                (productImage -> new ProductImageDto(productImage.getId(), FileService.getImageUrl(productImage.getImageName()))).toList();
+        productResponseDto.setProductImages(productImages);
         return productResponseDto;
     }
 

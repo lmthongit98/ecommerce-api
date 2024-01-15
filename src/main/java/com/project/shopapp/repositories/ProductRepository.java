@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
@@ -15,6 +16,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE (p.name LIKE CONCAT('%', :searchKey, '%') OR p.description LIKE CONCAT('%', :searchKey, '%')) " +
             "AND p.active = true AND p.category.id = :categoryId ")
     Page<Product> searchProducts(Long categoryId, String searchKey, Pageable pageable);
+
+    @Query("SELECT p FROM Product p JOIN FETCH p.productImages WHERE p.id = :id")
+    Optional<Product> findProductWithImagesById(Long id);
 
     List<Product> findByCategory(Category category);
 

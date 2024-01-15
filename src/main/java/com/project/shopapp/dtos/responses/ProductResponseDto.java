@@ -1,8 +1,9 @@
 package com.project.shopapp.dtos.responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,6 +13,6 @@ public class ProductResponseDto extends BaseResponse {
     private Float price;
     private String thumbnail;
     private String description;
-    @JsonProperty("category_id")
     private Long categoryId;
+    private List<ProductImageDto> productImages;
 }
