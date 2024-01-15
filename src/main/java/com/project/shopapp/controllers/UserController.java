@@ -32,7 +32,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final RefreshTokenService refreshTokenService;
     private final ApplicationEventPublisher publisher;
 
     @PostMapping("/signup")
@@ -46,37 +45,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
-        LoginResponseDto loginResponseDto = userService.login(userLoginDto);
-        return ResponseEntity.ok(loginResponseDto);
-    }
-
     @GetMapping("/details")
     public ResponseEntity<?> getUserDetails(Authentication authentication) {
         UserResponseDto userResponseDto = userService.getUserDetails(authentication);
         return ResponseEntity.ok(userResponseDto);
-    }
-
-    @GetMapping("/verifyEmail")
-    public ResponseEntity<?> verifyEmail(@RequestParam("token") String token) {
-        String result = userService.verifyToken(token);
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
-        String requestRefreshToken = request.refreshToken();
-        var tokenRefreshResponseDto = refreshTokenService.refreshToken(requestRefreshToken);
-        return ResponseEntity.ok(tokenRefreshResponseDto);
     }
 
     private String getVerifyEmailUrl() {

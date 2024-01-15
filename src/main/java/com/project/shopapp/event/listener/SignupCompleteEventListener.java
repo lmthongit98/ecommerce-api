@@ -6,8 +6,8 @@ import com.project.shopapp.dtos.email.EmailTemplate;
 import com.project.shopapp.dtos.email.templates.SignUpConfirmEmailTemplate;
 import com.project.shopapp.event.SignupCompleteEvent;
 import com.project.shopapp.models.User;
+import com.project.shopapp.services.AuthService;
 import com.project.shopapp.services.NotificationService;
-import com.project.shopapp.services.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class SignupCompleteEventListener implements ApplicationListener<SignupCompleteEvent> {
 
     private final NotificationService notificationService;
-    private final UserService userService;
+    private final AuthService authService;
 
     @Override
     @Async
@@ -32,7 +32,7 @@ public class SignupCompleteEventListener implements ApplicationListener<SignupCo
         log.info("Listen signup event {}", event);
         User user = event.getUser();
         String verificationToken = UUID.randomUUID().toString();
-        userService.saveUserVerificationToken(user, verificationToken);
+        authService.saveUserVerificationToken(user, verificationToken);
         String url = event.getVerifyUrl() + verificationToken;
         EmailTemplate emailTemplate = new SignUpConfirmEmailTemplate(user.getFullName(), url);
         EmailRequestDto emailRequestDto = EmailRequestDto.builder()
