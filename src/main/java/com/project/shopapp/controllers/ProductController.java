@@ -8,11 +8,15 @@ import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -49,6 +53,18 @@ public class ProductController {
         }
         ProductResponseDto productResponseDto = productService.createProduct(productRequestDto);
         return ResponseEntity.ok(productResponseDto);
+    }
+
+    @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadImages(@PathVariable("id") Long productId, @ModelAttribute("files") List<MultipartFile> files) {
+        var productImages = productService.uploadProductImages(productId, files);
+        return ResponseEntity.ok(productImages);
+    }
+
+    @GetMapping("/images/{imageName:.+}")
+    public ResponseEntity<?> getImage(@PathVariable String imageName) throws MalformedURLException {
+        Resource resource = productService.getImage(imageName);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
     }
 
     @PutMapping("/{id}")

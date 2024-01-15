@@ -1,21 +1,34 @@
 package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.requests.ProductRequestDto;
+import com.project.shopapp.dtos.responses.ProductImageDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
+import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.ProductMapper;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.models.Product;
+import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.repositories.CategoryRepository;
+import com.project.shopapp.repositories.ProductImageRepository;
 import com.project.shopapp.repositories.ProductRepository;
+import com.project.shopapp.services.FileService;
 import com.project.shopapp.services.ProductService;
 import com.project.shopapp.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +37,9 @@ public class ProductServiceImpl implements ProductService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
     private final ProductMapper productMapper;
+    private final FileService fileService;
 
     @Override
     public PagingResponseDto<ProductResponseDto> getProducts(Long categoryId, String searchKey, int pageNo, int pageSize, String sortBy, String sortDir) {
@@ -68,6 +83,66 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean existsByName(String productName) {
         return productRepository.existsByName(productName);
+    }
+
+    @Override
+    @Transactional
+    public List<ProductImageDto> uploadProductImages(Long productId, List<MultipartFile> files) {
+        Product existingProduct = findProductById(productId);
+        files = files == null ? new ArrayList<>() : files;
+        if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+            throw new BadRequestException("Maximum product images is " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
+        }
+        List<ProductImageDto> productImages = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (file.getSize() == 0) {
+                continue;
+            }
+            if (file.getSize() > 10 * 1024 * 1024) { // size > 10MB
+                throw new BadRequestException("Size is too large!");
+
+            }
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new BadRequestException("Invalid content type!");
+            }
+            String filename = fileService.storeFile(file);
+            ProductImageDto productImage = createProductImage(existingProduct.getId(), filename);
+            productImages.add(productImage);
+        }
+        return productImages;
+    }
+
+    @Override
+    public Resource getImage(String imageName) throws MalformedURLException {
+        java.nio.file.Path imagePath = Paths.get("uploads/" + imageName);
+        return new UrlResource(imagePath.toUri());
+    }
+
+    private ProductImageDto createProductImage(Long productId, String imageName) {
+        Product existingProduct = productRepository
+                .findById(productId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Cannot find product with id: " + productId));
+        ProductImage newProductImage = ProductImage.builder()
+                .product(existingProduct)
+                .imageName(imageName)
+                .build();
+        int size = productImageRepository.countByProduct_Id(productId);
+        if (size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+            throw new IllegalArgumentException(
+                    "Number of images must be <= " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
+        }
+        if (!StringUtils.hasText(existingProduct.getThumbnail())) {
+            existingProduct.setThumbnail(imageName);
+        }
+        productRepository.save(existingProduct);
+        productImageRepository.save(newProductImage);
+        return ProductImageDto.builder()
+                .imageUrl(FileService.getImageUrl(imageName))
+                .productId(existingProduct.getId())
+                .build();
     }
 
     private Product findProductById(Long productId) {

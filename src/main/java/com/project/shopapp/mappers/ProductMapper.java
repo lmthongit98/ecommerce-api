@@ -4,9 +4,11 @@ import com.project.shopapp.dtos.requests.ProductRequestDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.models.Product;
+import com.project.shopapp.services.FileService;
 import com.project.shopapp.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -34,6 +36,9 @@ public class ProductMapper {
     public ProductResponseDto mapToDto(Product product) {
         ProductResponseDto productResponseDto = objectMapperUtils.mapToEntityOrDto(product, ProductResponseDto.class);
         productResponseDto.setCategoryId(product.getCategory().getId());
+        if (StringUtils.hasText(product.getThumbnail())) {
+            productResponseDto.setThumbnail(FileService.getImageUrl(product.getThumbnail()));
+        }
         return productResponseDto;
     }
 
