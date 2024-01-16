@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 public class BaseResponse {
     protected LocalDateTime createdAt;
     protected String createdBy;
-    protected LocalDateTime lastModifiedAt;
-    protected String lastModifiedBy;
+    protected LocalDateTime updatedAt;
+    protected String updatedBy;
 }
