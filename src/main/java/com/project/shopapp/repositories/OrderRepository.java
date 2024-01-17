@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserId(Long userId);
@@ -19,4 +20,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "OR o.email LIKE %:keyword%)")
     Page<Order> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
+    Optional<Order> findByIdAndActive(Long orderId, boolean active);
 }

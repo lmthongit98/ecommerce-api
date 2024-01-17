@@ -47,12 +47,13 @@ public class OrderController {
             List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
             return ResponseEntity.badRequest().body(errorMessages);
         }
-        return ResponseEntity.ok("created order successfully!");
+        OrderResponseDto orderResponseDto = orderService.updateOrder(orderRequestDto, id);
+        return ResponseEntity.ok(orderResponseDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
-
+        orderService.deleteOrder(id);
         return ResponseEntity.ok("\"Deleted order successfully!\"");
     }
 

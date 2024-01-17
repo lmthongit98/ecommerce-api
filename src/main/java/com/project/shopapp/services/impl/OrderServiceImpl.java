@@ -52,8 +52,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto getOrderById(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
+        Order order = getOrder(orderId);
         return orderMapper.mapToDto(order);
+    }
+
+    private Order getOrder(Long orderId) {
+        return orderRepository.findByIdAndActive(orderId, true).orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
+    }
+
+    @Override
+    public void deleteOrder(Long id) {
+        Order order = getOrder(id);
+        order.setActive(false);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public OrderResponseDto updateOrder(OrderRequestDto orderRequestDto, Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cannot find order with id: " + id));
+        User existingUser = userRepository.findById(orderRequestDto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("Cannot find user with id: " + id));
+        orderMapper.mapToPersistedEntity(order, orderRequestDto, existingUser);
+        return orderMapper.mapToDto(orderRepository.save(order));
     }
 
     private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto, Order order) {
