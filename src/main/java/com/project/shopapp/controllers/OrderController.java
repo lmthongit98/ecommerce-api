@@ -31,7 +31,8 @@ public class OrderController {
 
     @GetMapping("/{user_id}")
     public ResponseEntity<?> getOrders(@PathVariable("user_id") Long userId) {
-        return ResponseEntity.ok("ok");
+        List<OrderResponseDto> orders = orderService.findByUserId(userId);
+        return ResponseEntity.ok(orders);
     }
 
     @PutMapping("/{id}")

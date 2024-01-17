@@ -6,14 +6,18 @@ import com.project.shopapp.enums.OrderStatus;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.models.User;
 import com.project.shopapp.utils.ObjectMapperUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapper {
 
-    private ObjectMapperUtils objectMapperUtils;
+    private final ObjectMapperUtils objectMapperUtils;
 
     public Order mapToEntity(OrderRequestDto orderRequestDto, User user, LocalDate shippingDate) {
         Order order = objectMapperUtils.mapToEntityOrDto(orderRequestDto, Order.class);
@@ -26,5 +30,9 @@ public class OrderMapper {
 
     public OrderResponseDto mapToDto(Order savedOrder) {
         return objectMapperUtils.mapToEntityOrDto(savedOrder, OrderResponseDto.class);
+    }
+
+    public List<OrderResponseDto> mapToDtoList(List<Order> orders) {
+        return orders.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 }

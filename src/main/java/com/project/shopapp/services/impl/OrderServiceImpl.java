@@ -44,6 +44,12 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.mapToDto(savedOrder);
     }
 
+    @Override
+    public List<OrderResponseDto> findByUserId(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orderMapper.mapToDtoList(orders);
+    }
+
     private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto, Order order) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (CartItemDTO cartItemDTO : orderRequestDto.getCartItems()) {
