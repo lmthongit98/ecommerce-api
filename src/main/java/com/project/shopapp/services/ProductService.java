@@ -26,4 +26,6 @@ public interface ProductService {
     List<ProductImageDto> uploadProductImages(Long productId, List<MultipartFile> files);
 
     Resource getImage(String imageName) throws MalformedURLException;
+
+    List<ProductResponseDto> findProductsByIds(List<Long> productIds);
 }

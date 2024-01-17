@@ -119,6 +119,11 @@ public class ProductServiceImpl implements ProductService {
         return new UrlResource(imagePath.toUri());
     }
 
+    @Override
+    public List<ProductResponseDto> findProductsByIds(List<Long> productIds) {
+        return productIds.stream().map(this::getProductById).toList();
+    }
+
     private ProductImageDto createProductImage(Long productId, String imageName) {
         Product existingProduct = productRepository
                 .findById(productId)

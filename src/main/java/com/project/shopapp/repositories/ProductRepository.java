@@ -17,7 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.active = true AND p.category.id = :categoryId ")
     Page<Product> searchProducts(Long categoryId, String searchKey, Pageable pageable);
 
-    @Query("SELECT p FROM Product p JOIN FETCH p.productImages WHERE p.id = :id")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.productImages WHERE p.id = :id AND p.active = true")
     Optional<Product> findProductWithImagesById(Long id);
 
     List<Product> findByCategory(Category category);

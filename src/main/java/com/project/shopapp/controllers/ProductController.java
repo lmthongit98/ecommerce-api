@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -81,6 +82,17 @@ public class ProductController {
     public ResponseEntity<?> deleteItemById(@PathVariable("id") Long productId) {
         productService.deleteProductById(productId);
         return ResponseEntity.ok(String.format("Product with id = %d deleted successfully", productId));
+    }
+
+    @GetMapping("/by-ids")
+    public ResponseEntity<?> getProductsByIds(@RequestParam("ids") String ids) {
+        try {
+            List<Long> productIds = Arrays.stream(ids.split(",")).map(Long::parseLong).toList();
+            List<ProductResponseDto> products = productService.findProductsByIds(productIds);
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/generateFakeProducts")
