@@ -52,7 +52,7 @@ public class UserController {
     }
 
     private String getVerifyEmailUrl() {
-        return MvcUriComponentsBuilder.fromMethodName(UserController.class, "verifyEmail", "").build().toUriString();
+        return MvcUriComponentsBuilder.fromMethodName(AuthController.class, "verifyEmail", "").build().toUriString();
     }
 
 }
