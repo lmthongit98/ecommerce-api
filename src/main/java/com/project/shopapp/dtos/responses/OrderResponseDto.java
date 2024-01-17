@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -55,5 +56,8 @@ public class OrderResponseDto
 
     @JsonProperty("payment_method")
     private String paymentMethod;
+
+    @JsonProperty("order_details")
+    Set<OrderDetailResponse> orderDetails;
 
 }

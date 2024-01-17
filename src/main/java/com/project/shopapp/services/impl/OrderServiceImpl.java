@@ -50,6 +50,12 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.mapToDtoList(orders);
     }
 
+    @Override
+    public OrderResponseDto getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
+        return orderMapper.mapToDto(order);
+    }
+
     private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto, Order order) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (CartItemDTO cartItemDTO : orderRequestDto.getCartItems()) {

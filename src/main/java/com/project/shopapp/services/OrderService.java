@@ -9,4 +9,6 @@ public interface OrderService {
     OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
 
     List<OrderResponseDto> findByUserId(Long userId);
+
+    OrderResponseDto getOrderById(Long orderId);
 }

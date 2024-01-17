@@ -29,10 +29,16 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDto);
     }
 
-    @GetMapping("/{user_id}")
+    @GetMapping("user/{user_id}")
     public ResponseEntity<?> getOrders(@PathVariable("user_id") Long userId) {
         List<OrderResponseDto> orders = orderService.findByUserId(userId);
         return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrder(@PathVariable("id") Long orderId) {
+        OrderResponseDto orderResponseDto = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(orderResponseDto);
     }
 
     @PutMapping("/{id}")
@@ -47,7 +53,7 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
 
-        return ResponseEntity.ok("Deleted order successfully!");
+        return ResponseEntity.ok("\"Deleted order successfully!\"");
     }
 
 }

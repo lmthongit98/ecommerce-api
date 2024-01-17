@@ -5,6 +5,7 @@ import com.project.shopapp.dtos.responses.OrderResponseDto;
 import com.project.shopapp.enums.OrderStatus;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.models.User;
+import com.project.shopapp.services.FileService;
 import com.project.shopapp.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,9 @@ public class OrderMapper {
     }
 
     public OrderResponseDto mapToDto(Order savedOrder) {
-        return objectMapperUtils.mapToEntityOrDto(savedOrder, OrderResponseDto.class);
+        var orderResponse = objectMapperUtils.mapToEntityOrDto(savedOrder, OrderResponseDto.class);
+        orderResponse.getOrderDetails().forEach(order -> order.getProduct().setThumbnail(FileService.getImageUrl(order.getProduct().getThumbnail())));
+        return orderResponse;
     }
 
     public List<OrderResponseDto> mapToDtoList(List<Order> orders) {
