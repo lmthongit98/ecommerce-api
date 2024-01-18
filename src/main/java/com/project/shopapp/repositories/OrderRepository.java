@@ -1,5 +1,6 @@
 package com.project.shopapp.repositories;
 
+import com.project.shopapp.enums.OrderStatus;
 import com.project.shopapp.models.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     Optional<Order> findByIdAndActive(Long orderId, boolean active);
+
+    List<Order> findByStatus(OrderStatus orderStatus);
 }

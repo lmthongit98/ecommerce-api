@@ -7,7 +7,7 @@ import com.project.shopapp.dtos.email.templates.SignUpConfirmEmailTemplate;
 import com.project.shopapp.event.SignupCompleteEvent;
 import com.project.shopapp.models.User;
 import com.project.shopapp.services.AuthService;
-import com.project.shopapp.services.NotificationService;
+import com.project.shopapp.services.EmailService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SignupCompleteEventListener implements ApplicationListener<SignupCompleteEvent> {
 
-    private final NotificationService notificationService;
+    private final EmailService emailService;
     private final AuthService authService;
 
     @Override
@@ -40,7 +40,7 @@ public class SignupCompleteEventListener implements ApplicationListener<SignupCo
                 .tos(Collections.singletonList(new EmailId(user.getFullName(), user.getEmail())))
                 .emailTemplate(emailTemplate)
                 .build();
-        notificationService.sendNotification(emailRequestDto);
+        emailService.sendEmail(emailRequestDto);
     }
 
 }

@@ -2,6 +2,7 @@ package com.project.shopapp.dtos.email;
 
 import lombok.*;
 
+import java.io.File;
 import java.util.List;
 
 @Getter
@@ -9,14 +10,12 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmailRequestDto implements NotificationRequest {
+public class EmailRequestDto {
     private String subject;
     private EmailId from;
     private List<EmailId> tos;
     private List<EmailId> ccs;
+    private String attachmentFileName;
+    private File file;
     private EmailTemplate emailTemplate;
-    @Override
-    public MessageTemplate getTemplate() {
-        return emailTemplate;
-    }
 }

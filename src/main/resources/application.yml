@@ -55,3 +55,13 @@ springdoc:
   api-docs:
     path: /api-docs
   show-actuator: true
+
+email:
+  daily-failure-order-report:
+    subject: Daily Failure Order Report
+    to-address: lmthong98@gmail.com
+
+job:
+  scan:
+    failure:
+      order: 0 0 18 * * *

@@ -36,6 +36,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto orderRequestDto) {
         OrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
+        //todo: trigger event to send mail to customer
         return ResponseEntity.ok(orderResponseDto);
     }
 

@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.shopapp.dtos.email.EmailId;
 import com.project.shopapp.dtos.email.EmailRequestDto;
 import com.project.shopapp.dtos.email.EmailTemplate;
-import com.project.shopapp.dtos.email.NotificationRequest;
-import com.project.shopapp.services.NotificationService;
+import com.project.shopapp.services.EmailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,15 +14,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
-
 
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl implements NotificationService {
+public class EmailServiceImpl implements EmailService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -31,8 +30,7 @@ public class EmailServiceImpl implements NotificationService {
     private final ITemplateEngine templateEngine;
 
     @Async
-    public void sendNotification(NotificationRequest request) {
-        EmailRequestDto emailRequestDto = (EmailRequestDto) request;
+    public void sendEmail(EmailRequestDto emailRequestDto) {
         String[] tos = emailRequestDto.getTos().stream().map(EmailId::getEmail).toArray(String[]::new);
         logger.info("Sending email to {}...", tos);
         try {
@@ -42,6 +40,9 @@ public class EmailServiceImpl implements NotificationService {
             helper.setTo(tos);
             helper.setSubject(emailRequestDto.getSubject());
             helper.setText(processedBody, true);
+            if (emailRequestDto.getFile() != null && StringUtils.hasLength(emailRequestDto.getAttachmentFileName())) {
+                helper.addAttachment(emailRequestDto.getAttachmentFileName(), emailRequestDto.getFile());
+            }
             emailSender.send(message);
             logger.info("Email sent!");
         } catch (Exception e) {
@@ -69,17 +70,18 @@ public class EmailServiceImpl implements NotificationService {
 
     private void convertParamEntryToString(Map.Entry<String, Object> paramEntry, Map<String, Object> params) {
         Object mapValue = paramEntry.getValue();
-        if (mapValue != null) {
-            String convertedValue;
-            if (!(mapValue instanceof Integer) && !(mapValue instanceof Long)) {
-                if (mapValue instanceof Double || mapValue instanceof Float) {
-                    convertedValue = String.format("%.2f", mapValue);
-                    params.put(paramEntry.getKey(), convertedValue);
-                }
-            } else {
-                convertedValue = mapValue.toString();
+        if (mapValue == null) {
+            return;
+        }
+        String convertedValue;
+        if (!(mapValue instanceof Integer) && !(mapValue instanceof Long)) {
+            if (mapValue instanceof Double || mapValue instanceof Float) {
+                convertedValue = String.format("%.2f", mapValue);
                 params.put(paramEntry.getKey(), convertedValue);
             }
+        } else {
+            convertedValue = mapValue.toString();
+            params.put(paramEntry.getKey(), convertedValue);
         }
     }
 
