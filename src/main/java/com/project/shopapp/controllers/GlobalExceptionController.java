@@ -10,8 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -33,18 +37,18 @@ public class GlobalExceptionController {
 
     }
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<ApiErrorResponse> handleRequestNotValidException(MethodArgumentNotValidException e) {
-//        List<String> errors = new ArrayList<>();
-//        e.getBindingResult()
-//                .getFieldErrors().forEach(error -> errors.add(error.getField() + ": " + error.getDefaultMessage()));
-//        e.getBindingResult()
-//                .getGlobalErrors() //Global errors are not associated with a specific field but are related to the entire object being validated.
-//                .forEach(error -> errors.add(error.getObjectName() + ": " + error.getDefaultMessage()));
-//
-//        String message = "Validation of request failed: %s".formatted(String.join(", ", errors));
-//        return ResponseEntity.status(BAD_REQUEST).body(new ApiErrorResponse(BAD_REQUEST.value(), message));
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleRequestNotValidException(MethodArgumentNotValidException e) {
+        List<String> errors = new ArrayList<>();
+        e.getBindingResult()
+                .getFieldErrors().forEach(error -> errors.add(error.getField() + ": " + error.getDefaultMessage()));
+        e.getBindingResult()
+                .getGlobalErrors() //Global errors are not associated with a specific field but are related to the entire object being validated.
+                .forEach(error -> errors.add(error.getObjectName() + ": " + error.getDefaultMessage()));
+
+        String message = "Validation of request failed: %s".formatted(String.join(", ", errors));
+        return ResponseEntity.status(BAD_REQUEST).body(new ApiErrorResponse(BAD_REQUEST.value(), message));
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiErrorResponse> handleBadRequestException(BadRequestException e) {

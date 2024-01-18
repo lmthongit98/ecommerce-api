@@ -21,11 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto) {
         LoginResponseDto loginResponseDto = authService.login(userLoginDto);
         return ResponseEntity.ok(loginResponseDto);
     }
@@ -37,11 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request) {
         String requestRefreshToken = request.refreshToken();
         var tokenRefreshResponseDto = authService.refreshToken(requestRefreshToken);
         return ResponseEntity.ok(tokenRefreshResponseDto);

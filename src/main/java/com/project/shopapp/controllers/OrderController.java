@@ -1,6 +1,7 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.requests.OrderRequestDto;
+import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
 import com.project.shopapp.services.OrderService;
 import jakarta.validation.Valid;
@@ -20,11 +21,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto orderRequestDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto orderRequestDto) {
         OrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
         return ResponseEntity.ok(orderResponseDto);
     }
@@ -42,11 +39,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateOrder(@PathVariable Long id, @RequestBody @Valid OrderRequestDto orderRequestDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> updateOrder(@PathVariable Long id, @RequestBody @Valid OrderRequestDto orderRequestDto) {
         OrderResponseDto orderResponseDto = orderService.updateOrder(orderRequestDto, id);
         return ResponseEntity.ok(orderResponseDto);
     }
@@ -54,7 +47,7 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
-        return ResponseEntity.ok("\"Deleted order successfully!\"");
+        return ResponseEntity.ok(GenericResponse.empty());
     }
 
 }

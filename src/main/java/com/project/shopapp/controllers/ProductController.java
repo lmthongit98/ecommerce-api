@@ -47,11 +47,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductRequestDto productRequestDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductRequestDto productRequestDto) {
         ProductResponseDto productResponseDto = productService.createProduct(productRequestDto);
         return ResponseEntity.ok(productResponseDto);
     }
@@ -69,11 +65,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateItem(@PathVariable("id") Long productId, @Valid @RequestBody ProductRequestDto productRequestDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> updateItem(@PathVariable("id") Long productId, @Valid @RequestBody ProductRequestDto productRequestDto) {
         ProductResponseDto productResponseDto = productService.updateProduct(productId, productRequestDto);
         return ResponseEntity.ok(productResponseDto);
     }

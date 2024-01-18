@@ -35,11 +35,7 @@ public class UserController {
     private final ApplicationEventPublisher publisher;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto) {
         User user = userService.signup(requestDto);
         publisher.publishEvent(new SignupCompleteEvent(user, getVerifyEmailUrl()));
         return ResponseEntity.status(HttpStatus.CREATED).build();

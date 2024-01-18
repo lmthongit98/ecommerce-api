@@ -1,10 +1,7 @@
 package com.project.shopapp.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -17,11 +14,13 @@ public class ProductRequestDto {
     @Size(min = 3, max = 200, message = "Name must be between 3 and 200 characters")
     private String name;
 
+    @NotNull(message = "Price is required")
     @Min(value = 0, message = "Price must be greater than or equal to 0")
     private Float price;
 
     private String description;
 
+    @NotNull(message = "CategoryId is required")
     private Long categoryId;
 
 }
