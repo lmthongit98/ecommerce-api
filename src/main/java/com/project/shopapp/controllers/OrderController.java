@@ -1,14 +1,14 @@
 package com.project.shopapp.controllers;
 
+import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.OrderRequestDto;
 import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
+import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +19,19 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+
+
+    @GetMapping
+    public ResponseEntity<?> getOrdersByKeyword(
+            @RequestParam(value = "search_key", defaultValue = AppConstants.EMPTY, required = false) String searchKey,
+            @RequestParam(value = "page_no", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "page_size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sort_by", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sort_dir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ) {
+        PagingResponseDto<OrderResponseDto> pagingResponseDto = orderService.getProducts(searchKey, pageNo, pageSize, sortBy, sortDir);
+        return ResponseEntity.ok(pagingResponseDto);
+    }
 
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody @Valid OrderRequestDto orderRequestDto) {

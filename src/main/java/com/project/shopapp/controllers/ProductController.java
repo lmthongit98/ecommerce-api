@@ -3,16 +3,14 @@ package com.project.shopapp.controllers;
 import com.github.javafaker.Faker;
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
-import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
+import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -3,6 +3,7 @@ package com.project.shopapp.services.impl;
 import com.project.shopapp.dtos.requests.CartItemDTO;
 import com.project.shopapp.dtos.requests.OrderRequestDto;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
+import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.OrderMapper;
 import com.project.shopapp.models.Order;
@@ -13,7 +14,10 @@ import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.services.OrderService;
+import com.project.shopapp.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -73,6 +77,15 @@ public class OrderServiceImpl implements OrderService {
         User existingUser = userRepository.findById(orderRequestDto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("Cannot find user with id: " + id));
         orderMapper.mapToPersistedEntity(order, orderRequestDto, existingUser);
         return orderMapper.mapToDto(orderRepository.save(order));
+    }
+
+    @Override
+    public PagingResponseDto<OrderResponseDto> getProducts(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Pageable pageable = PageableUtils.getPageable(pageNo, pageSize, sortBy, sortDir);
+        Page<Order> orders = orderRepository.findByKeyword(searchKey, pageable);
+        List<Order> listOfOrders = orders.getContent();
+        List<OrderResponseDto> content = orderMapper.mapToDtoList(listOfOrders);
+        return new PagingResponseDto<>(orders, content);
     }
 
     private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto, Order order) {
