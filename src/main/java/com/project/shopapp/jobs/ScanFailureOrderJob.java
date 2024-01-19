@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +53,9 @@ public class ScanFailureOrderJob {
     @Scheduled(cron = "${job.scan.failure.order}", zone = "Asia/Saigon")
     public void scan() {
         List<Order> failureOrders = orderRepository.findByStatus(OrderStatus.CANCELLED);
+        if (CollectionUtils.isEmpty(failureOrders)) {
+            return;
+        }
         File tmpFile = generateXlsxReport(failureOrders, REPORT_NAME);
         String attachedFileName = String.format("%s_%s.xlsx", REPORT_NAME, LocalDate.now().format(DATE_FORMATTER));
         EmailRequestDto emailRequestDto = EmailRequestDto.builder()

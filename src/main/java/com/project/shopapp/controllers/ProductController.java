@@ -3,6 +3,7 @@ package com.project.shopapp.controllers;
 import com.github.javafaker.Faker;
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
+import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.services.ProductService;
@@ -71,18 +72,14 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteItemById(@PathVariable("id") Long productId) {
         productService.deleteProductById(productId);
-        return ResponseEntity.ok(String.format("Product with id = %d deleted successfully", productId));
+        return ResponseEntity.ok(GenericResponse.empty());
     }
 
     @GetMapping("/by-ids")
     public ResponseEntity<?> getProductsByIds(@RequestParam("ids") String ids) {
-        try {
-            List<Long> productIds = Arrays.stream(ids.split(",")).map(Long::parseLong).toList();
-            List<ProductResponseDto> products = productService.findProductsByIds(productIds);
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        List<Long> productIds = Arrays.stream(ids.split(",")).map(Long::parseLong).toList();
+        List<ProductResponseDto> products = productService.findProductsByIds(productIds);
+        return ResponseEntity.ok(products);
     }
 
     @PostMapping("/generateFakeProducts")
