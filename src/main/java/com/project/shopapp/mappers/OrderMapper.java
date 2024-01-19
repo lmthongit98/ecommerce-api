@@ -29,9 +29,10 @@ public class OrderMapper {
         return order;
     }
 
-    public OrderResponseDto mapToDto(Order savedOrder) {
-        var orderResponse = objectMapperUtils.mapToEntityOrDto(savedOrder, OrderResponseDto.class);
-        orderResponse.getOrderDetails().forEach(order -> order.getProduct().setThumbnail(FileService.getImageUrl(order.getProduct().getThumbnail())));
+    public OrderResponseDto mapToDto(Order order) {
+        var orderResponse = objectMapperUtils.mapToEntityOrDto(order, OrderResponseDto.class);
+        orderResponse.getOrderDetails().forEach(o -> o.getProduct().setThumbnail(FileService.getImageUrl(o.getProduct().getThumbnail())));
+        orderResponse.setUserId(order.getUser().getId());
         return orderResponse;
     }
 
