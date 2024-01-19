@@ -41,23 +41,19 @@ public class OrderServiceImpl implements OrderService {
         if (shippingDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Date must be at least today !");
         }
-        Order order = orderMapper.mapToEntity(orderRequestDto, user, shippingDate);
-        List<OrderDetail> orderDetails = getOrderDetails(orderRequestDto, order);
-        order.setOrderDetails(orderDetails);
-        Order savedOrder = orderRepository.save(order);
-        return orderMapper.mapToDto(savedOrder);
+        List<OrderDetail> orderDetails = getOrderDetails(orderRequestDto);
+        Order order = orderMapper.mapToEntity(orderRequestDto, user, shippingDate, orderDetails);
+        return orderMapper.mapToDto(orderRepository.save(order));
     }
 
     @Override
     public List<OrderResponseDto> getOrdersByUserId(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
-        return orderMapper.mapToDtoList(orders);
+        return orderMapper.mapToDtoList(orderRepository.findByUserId(userId));
     }
 
     @Override
     public OrderResponseDto getOrderById(Long orderId) {
-        Order order = getOrder(orderId);
-        return orderMapper.mapToDto(order);
+        return orderMapper.mapToDto(getOrder(orderId));
     }
 
     private Order getOrder(Long orderId) {
@@ -88,13 +84,12 @@ public class OrderServiceImpl implements OrderService {
         return new PagingResponseDto<>(orders, content);
     }
 
-    private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto, Order order) {
+    private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (CartItemDTO cartItemDTO : orderRequestDto.getCartItems()) {
             Product product = productRepository.findById(cartItemDTO.getProductId()).orElseThrow(() -> new ResourceNotFoundException("Product", cartItemDTO.getProductId()));
             OrderDetail orderDetail = OrderDetail.builder()
                     .product(product)
-                    .order(order)
                     .numberOfProducts(cartItemDTO.getQuantity())
                     .price(product.getPrice())
                     .build();

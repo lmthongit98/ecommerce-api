@@ -4,6 +4,7 @@ import com.project.shopapp.dtos.requests.OrderRequestDto;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
 import com.project.shopapp.enums.OrderStatus;
 import com.project.shopapp.models.Order;
+import com.project.shopapp.models.OrderDetail;
 import com.project.shopapp.models.User;
 import com.project.shopapp.services.FileService;
 import com.project.shopapp.utils.ObjectMapperUtils;
@@ -20,12 +21,13 @@ public class OrderMapper {
 
     private final ObjectMapperUtils objectMapperUtils;
 
-    public Order mapToEntity(OrderRequestDto orderRequestDto, User user, LocalDate shippingDate) {
+    public Order mapToEntity(OrderRequestDto orderRequestDto, User user, LocalDate shippingDate, List<OrderDetail> orderDetails) {
         Order order = objectMapperUtils.mapToEntityOrDto(orderRequestDto, Order.class);
         order.setUser(user);
         order.setOrderDate(LocalDate.now());
         order.setStatus(OrderStatus.PENDING);
         order.setShippingDate(shippingDate);
+        order.addOrderDetails(orderDetails);
         return order;
     }
 

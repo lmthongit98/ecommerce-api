@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -66,6 +67,14 @@ public class Order extends BaseEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetail> orderDetails = new ArrayList<>();
+
+    public void addOrderDetails(List<OrderDetail> orderDetails) {
+        orderDetails.forEach(orderDetail -> {
+            this.orderDetails.add(orderDetail);
+            orderDetail.setOrder(this);
+        });
+    }
+
 }
 
