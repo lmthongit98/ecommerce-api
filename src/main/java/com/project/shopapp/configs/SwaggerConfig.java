@@ -29,9 +29,9 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("TapLink Api Doc")
+                .title("Ecommerce Api Doc")
                 .version("1.0.0")
-                .description("HTTP APIs to manage TapLink Menus.")
-                .contact(new Contact().name("Bao Nguyen"));
+                .description("Ecommerce APIs with Spring Boot.")
+                .contact(new Contact().name("Thong Ly Minh"));
     }
 }
