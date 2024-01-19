@@ -25,8 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto) {
         Category category = objectMapperUtils.mapToEntityOrDto(categoryRequestDto, Category.class);
-        Category savedCategory = categoryRepository.save(category);
-        return objectMapperUtils.mapToEntityOrDto(savedCategory, CategoryResponseDto.class);
+        return objectMapperUtils.mapToEntityOrDto(categoryRepository.save(category), CategoryResponseDto.class);
     }
 
     @Override
@@ -39,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponseDto updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
         Category category = getCategory(categoryId);
         category.setName(categoryRequestDto.getName());
-        return objectMapperUtils.mapToEntityOrDto(category, CategoryResponseDto.class);
+        return objectMapperUtils.mapToEntityOrDto(categoryRepository.save(category), CategoryResponseDto.class);
     }
 
     @Override
