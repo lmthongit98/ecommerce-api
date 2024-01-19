@@ -50,14 +50,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         String method = request.getMethod();
         if (authentication.getPrincipal() instanceof User user) {
             List<Permission> permissions = userRepository.findAllPermissions(user.getEmail());
-            for (Permission permission : permissions) {
-                if (!permission.getMethod().name().equals(method)) {
-                    continue;
-                }
-                if (matcher.match(permission.getPath(), path)) {
-                    return true;
-                }
-            }
+            return permissions.stream().anyMatch(permission -> method.equals(permission.getMethod().name()) && matcher.match(permission.getPath(), path));
         }
         return false;
     }
