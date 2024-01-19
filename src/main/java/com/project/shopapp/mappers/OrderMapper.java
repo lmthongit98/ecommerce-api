@@ -40,7 +40,7 @@ public class OrderMapper {
         return orders.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
-    public void mapToPersistedEntity(Order order, OrderRequestDto orderRequestDto, User user) {
+    public void mapToEntity(Order order, OrderRequestDto orderRequestDto, User user) {
         objectMapperUtils.mapToPersistedEntity(order, orderRequestDto);
         order.setUser(user);
     }

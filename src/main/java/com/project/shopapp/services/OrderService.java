@@ -9,7 +9,7 @@ import java.util.List;
 public interface OrderService {
     OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
 
-    List<OrderResponseDto> findByUserId(Long userId);
+    List<OrderResponseDto> getOrdersByUserId(Long userId);
 
     OrderResponseDto getOrderById(Long orderId);
 
@@ -17,5 +17,5 @@ public interface OrderService {
 
     OrderResponseDto updateOrder(OrderRequestDto orderRequestDto, Long id);
 
-    PagingResponseDto<OrderResponseDto> getProducts(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir);
+    PagingResponseDto<OrderResponseDto> getOrdersByKeywords(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir);
 }

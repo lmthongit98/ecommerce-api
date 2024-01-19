@@ -29,7 +29,7 @@ public class OrderController {
             @RequestParam(value = "sort_by", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sort_dir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
-        PagingResponseDto<OrderResponseDto> pagingResponseDto = orderService.getProducts(searchKey, pageNo, pageSize, sortBy, sortDir);
+        PagingResponseDto<OrderResponseDto> pagingResponseDto = orderService.getOrdersByKeywords(searchKey, pageNo, pageSize, sortBy, sortDir);
         return ResponseEntity.ok(pagingResponseDto);
     }
 
@@ -42,7 +42,7 @@ public class OrderController {
 
     @GetMapping("user/{user_id}")
     public ResponseEntity<?> getOrders(@PathVariable("user_id") Long userId) {
-        List<OrderResponseDto> orders = orderService.findByUserId(userId);
+        List<OrderResponseDto> orders = orderService.getOrdersByUserId(userId);
         return ResponseEntity.ok(orders);
     }
 

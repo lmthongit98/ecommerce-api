@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> findByUserId(Long userId) {
+    public List<OrderResponseDto> getOrdersByUserId(Long userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
         return orderMapper.mapToDtoList(orders);
     }
@@ -75,12 +75,12 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto updateOrder(OrderRequestDto orderRequestDto, Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cannot find order with id: " + id));
         User existingUser = userRepository.findById(orderRequestDto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("Cannot find user with id: " + id));
-        orderMapper.mapToPersistedEntity(order, orderRequestDto, existingUser);
+        orderMapper.mapToEntity(order, orderRequestDto, existingUser);
         return orderMapper.mapToDto(orderRepository.save(order));
     }
 
     @Override
-    public PagingResponseDto<OrderResponseDto> getProducts(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PagingResponseDto<OrderResponseDto> getOrdersByKeywords(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir) {
         Pageable pageable = PageableUtils.getPageable(pageNo, pageSize, sortBy, sortDir);
         Page<Order> orders = orderRepository.findByKeyword(searchKey, pageable);
         List<Order> listOfOrders = orders.getContent();
