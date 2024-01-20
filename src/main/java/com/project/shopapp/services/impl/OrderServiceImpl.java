@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
         paymentMethodTypes.add("card");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("amount", paymentRequestDto.getAmount() * 100);
+        params.put("amount", (paymentRequestDto.getAmount() / 23000) * 100);
         params.put("currency", paymentRequestDto.getCurrency());
         params.put("payment_method_types", paymentMethodTypes);
         params.put("description", "eCommerce Shop");
