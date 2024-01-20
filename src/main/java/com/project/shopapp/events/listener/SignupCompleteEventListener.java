@@ -1,10 +1,10 @@
-package com.project.shopapp.event.listener;
+package com.project.shopapp.events.listener;
 
 import com.project.shopapp.dtos.email.EmailId;
 import com.project.shopapp.dtos.email.EmailRequestDto;
 import com.project.shopapp.dtos.email.EmailTemplate;
 import com.project.shopapp.dtos.email.templates.SignUpConfirmEmailTemplate;
-import com.project.shopapp.event.SignupCompleteEvent;
+import com.project.shopapp.events.SignupCompleteEvent;
 import com.project.shopapp.models.User;
 import com.project.shopapp.services.AuthService;
 import com.project.shopapp.services.EmailService;

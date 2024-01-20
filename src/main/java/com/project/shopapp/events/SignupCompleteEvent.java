@@ -1,4 +1,4 @@
-package com.project.shopapp.event;
+package com.project.shopapp.events;
 
 import com.project.shopapp.models.User;
 import lombok.Getter;

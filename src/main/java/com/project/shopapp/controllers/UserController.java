@@ -2,7 +2,7 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.requests.SignupRequestDto;
 import com.project.shopapp.dtos.responses.UserResponseDto;
-import com.project.shopapp.event.SignupCompleteEvent;
+import com.project.shopapp.events.SignupCompleteEvent;
 import com.project.shopapp.models.User;
 import com.project.shopapp.services.UserService;
 import jakarta.validation.Valid;
