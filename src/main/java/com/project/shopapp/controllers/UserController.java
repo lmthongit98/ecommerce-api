@@ -1,6 +1,7 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.requests.SignupRequestDto;
+import com.project.shopapp.dtos.requests.UserUpdateDto;
 import com.project.shopapp.dtos.responses.UserResponseDto;
 import com.project.shopapp.events.SignupCompleteEvent;
 import com.project.shopapp.models.User;
@@ -29,9 +30,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/details")
+    @GetMapping("/profile")
     public ResponseEntity<?> getUserDetails(Authentication authentication) {
         UserResponseDto userResponseDto = userService.getUserDetails(authentication);
+        return ResponseEntity.ok(userResponseDto);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateUserDetails(@RequestBody UserUpdateDto userUpdateDto, Authentication authentication) {
+        UserResponseDto userResponseDto = userService.updateUser(authentication, userUpdateDto);
         return ResponseEntity.ok(userResponseDto);
     }
 

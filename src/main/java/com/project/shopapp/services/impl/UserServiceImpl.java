@@ -1,6 +1,7 @@
 package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.requests.SignupRequestDto;
+import com.project.shopapp.dtos.requests.UserUpdateDto;
 import com.project.shopapp.dtos.responses.UserResponseDto;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.DuplicateException;
@@ -45,6 +46,13 @@ public class UserServiceImpl implements UserService {
         String email = ((User) authentication.getPrincipal()).getEmail();
         User user = getUserWithRoleAndPermissions(email);
         return userMapper.mapToDto(user);
+    }
+
+    @Override
+    public UserResponseDto updateUser(Authentication authentication, UserUpdateDto userUpdateDto) {
+        String email = ((User) authentication.getPrincipal()).getEmail();
+        //todo: implement update user profile
+        return null;
     }
 
     private User getUserWithRoleAndPermissions(String email) {
