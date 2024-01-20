@@ -2,17 +2,22 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.OrderRequestDto;
+import com.project.shopapp.dtos.requests.PaymentRequestDto;
 import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.services.OrderService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -20,6 +25,13 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @PostMapping("/payment-intent")
+    public ResponseEntity<String> createPaymentIntent(@RequestBody PaymentRequestDto paymentRequestDto) throws StripeException {
+        log.info("paymentInfo.amount: " + paymentRequestDto.getAmount());
+        PaymentIntent intent = orderService.createPaymentIntent(paymentRequestDto);
+        String paymentIntent = intent.toJson();
+        return ResponseEntity.ok(paymentIntent);
+    }
 
     @GetMapping
     public ResponseEntity<?> getOrdersByKeyword(

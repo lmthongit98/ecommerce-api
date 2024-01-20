@@ -65,3 +65,7 @@ job:
   scan:
     failure:
       order: 0 0 18 * * *
+
+stripe:
+  key:
+    secret: sk_test_51OaYv9Ld1NrYfmBMrUwK0yDbNuktbuXPdPsKg8wGVh7ZCDInDdAnYjqBGFd6iPjuFSS1B7BGBqVRda8Ah1e4jJAf00pu6Jk157

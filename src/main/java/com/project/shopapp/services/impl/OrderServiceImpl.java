@@ -2,6 +2,7 @@ package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.requests.CartItemDTO;
 import com.project.shopapp.dtos.requests.OrderRequestDto;
+import com.project.shopapp.dtos.requests.PaymentRequestDto;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
@@ -15,24 +16,35 @@ import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.services.OrderService;
 import com.project.shopapp.utils.PageableUtils;
-import lombok.RequiredArgsConstructor;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-
     private final OrderMapper orderMapper;
+
+    public OrderServiceImpl(@Value("${stripe.key.secret}") String secretKey, OrderRepository orderRepository, UserRepository userRepository, ProductRepository productRepository, OrderMapper orderMapper) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.orderMapper = orderMapper;
+        Stripe.apiKey = secretKey;
+    }
 
     @Override
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
@@ -82,6 +94,21 @@ public class OrderServiceImpl implements OrderService {
         List<Order> listOfOrders = orders.getContent();
         List<OrderResponseDto> content = orderMapper.mapToDtoList(listOfOrders);
         return new PagingResponseDto<>(orders, content);
+    }
+
+    @Override
+    public PaymentIntent createPaymentIntent(PaymentRequestDto paymentRequestDto) throws StripeException {
+        List<String> paymentMethodTypes = new ArrayList<>();
+        paymentMethodTypes.add("card");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("amount", paymentRequestDto.getAmount() * 100);
+        params.put("currency", paymentRequestDto.getCurrency());
+        params.put("payment_method_types", paymentMethodTypes);
+        params.put("description", "eCommerce Shop");
+        params.put("receipt_email", paymentRequestDto.getReceiptEmail());
+
+        return PaymentIntent.create(params);
     }
 
     private List<OrderDetail> getOrderDetails(OrderRequestDto orderRequestDto) {
