@@ -1,13 +1,19 @@
 package com.project.shopapp.controllers;
 
+import com.project.shopapp.dtos.requests.SignupRequestDto;
 import com.project.shopapp.dtos.requests.TokenRefreshRequestDto;
 import com.project.shopapp.dtos.requests.UserLoginDto;
 import com.project.shopapp.dtos.responses.LoginResponseDto;
+import com.project.shopapp.events.SignupCompleteEvent;
+import com.project.shopapp.models.User;
 import com.project.shopapp.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -15,6 +21,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final ApplicationEventPublisher publisher;
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto) {
+        User user = authService.signup(requestDto);
+        publisher.publishEvent(new SignupCompleteEvent(user, getVerifyEmailUrl()));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userLoginDto) {
@@ -33,6 +47,10 @@ public class AuthController {
         String requestRefreshToken = request.refreshToken();
         var tokenRefreshResponseDto = authService.refreshToken(requestRefreshToken);
         return ResponseEntity.ok(tokenRefreshResponseDto);
+    }
+
+    private String getVerifyEmailUrl() {
+        return MvcUriComponentsBuilder.fromMethodName(AuthController.class, "verifyEmail", "").build().toUriString();
     }
 
 }

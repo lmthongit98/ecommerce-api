@@ -1,5 +1,6 @@
 package com.project.shopapp.services;
 
+import com.project.shopapp.dtos.requests.SignupRequestDto;
 import com.project.shopapp.dtos.requests.UserLoginDto;
 import com.project.shopapp.dtos.responses.LoginResponseDto;
 import com.project.shopapp.dtos.responses.TokenRefreshResponseDto;
@@ -15,4 +16,5 @@ public interface AuthService {
 
     void saveUserVerificationToken(User user, String verificationToken);
 
+    User signup(SignupRequestDto requestDto);
 }

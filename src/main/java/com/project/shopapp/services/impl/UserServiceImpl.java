@@ -22,24 +22,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public User signup(SignupRequestDto signupRequestDto) {
-        String email = signupRequestDto.getEmail();
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicateException("Email is already exist!");
-        }
-        Role userRole = roleRepository.findByName(Role.USER).orElseThrow(() -> new ResourceNotFoundException("User role could not be found"));
-        if (!signupRequestDto.getPassword().equals(signupRequestDto.getRetypePassword())) {
-            throw new BadRequestException("Password does not match!");
-        }
-        String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
-        User newUser = userMapper.mapToEntity(signupRequestDto, userRole, encodedPassword);
-        return userRepository.save(newUser);
-    }
 
     @Override
     public UserResponseDto getUserDetails(Authentication authentication) {

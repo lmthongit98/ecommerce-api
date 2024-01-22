@@ -51,7 +51,6 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers(
-                                        String.format("%s/users/signup", apiPrefix),
                                         String.format("%s/auth/**", apiPrefix),
                                         String.format("%s/healthcheck/**", apiPrefix),
                                         "/api-docs",
