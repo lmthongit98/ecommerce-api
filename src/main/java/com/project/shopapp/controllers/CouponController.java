@@ -1,10 +1,11 @@
 package com.project.shopapp.controllers;
 
-import com.project.shopapp.dtos.requests.CouponCreateDto;
+import com.project.shopapp.constants.AppConstants;
+import com.project.shopapp.dtos.requests.CouponApplyRequestDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
-import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.services.CouponService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,27 +16,51 @@ public class CouponController {
 
     private final CouponService couponService;
 
+    @GetMapping
+    public ResponseEntity<?> getCoupons(
+            @RequestParam(value = "search_key", defaultValue = AppConstants.EMPTY, required = false) String searchKey,
+            @RequestParam(value = "page_no", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "page_size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sort_by", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sort_dir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ) {
+        return ResponseEntity.ok(couponService.getCoupons(searchKey, pageNo, pageSize, sortBy, sortDir));
+    }
+
     @PostMapping("/apply")
-    public ResponseEntity<?> applyCoupon(@RequestBody CouponRequestDto couponRequestDto) {
-        var couponResponse = couponService.applyCoupon(couponRequestDto);
-        return ResponseEntity.ok(couponResponse);
+    public ResponseEntity<?> applyCoupon(@RequestBody CouponApplyRequestDto couponApplyRequestDto) {
+        return ResponseEntity.ok(couponService.applyCoupon(couponApplyRequestDto));
     }
 
     @PostMapping
-    public ResponseEntity<?> createCoupon(@RequestBody CouponCreateDto couponCreateDto) {
-        couponService.createCoupon(couponCreateDto);
-        return ResponseEntity.ok(GenericResponse.empty());
+    public ResponseEntity<?> createCoupon(@RequestBody CouponRequestDto couponRequestDto) {
+        return ResponseEntity.ok(couponService.createCoupon(couponRequestDto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCoupon(@PathVariable Long id, @RequestBody CouponRequestDto couponRequestDto) {
+        return ResponseEntity.ok(couponService.updateCoupon(id, couponRequestDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCoupon(@PathVariable Long id) {
+        couponService.deleteCoupon(id);
+        return ResponseEntity.ok(HttpEntity.EMPTY);
     }
 
     @GetMapping("/attributes")
     public ResponseEntity<?> getAttributes() {
-        return ResponseEntity.ok(GenericResponse.success(couponService.getAttributes()));
+        return ResponseEntity.ok(couponService.getAttributes());
     }
 
     @GetMapping("/operators")
     public ResponseEntity<?> getOperators() {
-        return ResponseEntity.ok(GenericResponse.success(couponService.getOperators()));
+        return ResponseEntity.ok(couponService.getOperators());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCouponById(@PathVariable Long id) {
+        return ResponseEntity.ok(couponService.getCouponById(id));
+    }
 
 }

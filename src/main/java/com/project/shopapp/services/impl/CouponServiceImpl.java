@@ -1,32 +1,30 @@
 package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.requests.CartItemDTO;
-import com.project.shopapp.dtos.requests.CouponCreateDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
-import com.project.shopapp.dtos.responses.AttributeResponseDto;
-import com.project.shopapp.dtos.responses.CouponResponseDto;
+import com.project.shopapp.dtos.requests.CouponApplyRequestDto;
+import com.project.shopapp.dtos.responses.*;
 import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.enums.Operator;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.CouponMapper;
-import com.project.shopapp.models.Category;
-import com.project.shopapp.models.Coupon;
-import com.project.shopapp.models.CouponCondition;
-import com.project.shopapp.models.Product;
+import com.project.shopapp.models.*;
 import com.project.shopapp.repositories.CouponRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.services.CouponService;
 import com.project.shopapp.dtos.coupon.CouponConditionFactory;
 import com.project.shopapp.dtos.coupon.conditions.GenericCondition;
+import com.project.shopapp.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,26 +37,26 @@ public class CouponServiceImpl implements CouponService {
     private final CouponMapper couponMapper;
 
     @Override
-    public CouponResponseDto applyCoupon(CouponRequestDto couponRequestDto) {
-        CouponResponseDto couponResponseDto = new CouponResponseDto();
-        Coupon coupon = couponRepository.findByCodeAndActive(couponRequestDto.getCouponCode(), true).orElseThrow(() -> new ResourceNotFoundException("Coupon is not valid: " + couponRequestDto.getCouponCode()));
+    public CouponApplyResponseDto applyCoupon(CouponApplyRequestDto couponApplyRequestDto) {
+        CouponApplyResponseDto couponApplyResponseDto = new CouponApplyResponseDto();
+        Coupon coupon = couponRepository.findByCodeAndActive(couponApplyRequestDto.getCouponCode(), true).orElseThrow(() -> new ResourceNotFoundException("Coupon is not valid: " + couponApplyRequestDto.getCouponCode()));
         if (coupon.isExpired()) {
             throw new BadRequestException("Coupon is expired!");
         }
         Set<CouponCondition> couponConditions = coupon.getCouponConditions();
-        Map<Attribute, Object> attributeMap = getConditionAttributeMap(couponRequestDto);
+        Map<Attribute, Object> attributeMap = getConditionAttributeMap(couponApplyRequestDto);
         List<GenericCondition> conditions = getConditions(couponConditions, attributeMap);
         Pair<Boolean, String> conditionMeet = checkConditionMeet(conditions);
         if (!conditionMeet.getFirst()) {
             throw new BadRequestException(conditionMeet.getSecond());
         }
-        calculateDiscount(couponRequestDto, coupon, couponResponseDto);
-        return couponResponseDto;
+        calculateDiscount(couponApplyRequestDto, coupon, couponApplyResponseDto);
+        return couponApplyResponseDto;
     }
 
     @Override
-    public void createCoupon(CouponCreateDto couponCreateDto) {
-        couponRepository.save(couponMapper.mapToEntity(couponCreateDto));
+    public CouponResponseDto createCoupon(CouponRequestDto couponRequestDto) {
+        return couponMapper.mapToDto(couponRepository.save(couponMapper.mapToEntity(couponRequestDto)));
     }
 
     @Override
@@ -71,10 +69,42 @@ public class CouponServiceImpl implements CouponService {
         return Arrays.stream(Operator.values()).map(Enum::name).toList();
     }
 
-    private void calculateDiscount(CouponRequestDto couponRequestDto, Coupon coupon, CouponResponseDto couponResponseDto) {
+    @Override
+    public CouponResponseDto getCouponById(Long id) {
+        return couponMapper.mapToDto(getCoupon(id));
+    }
+
+    @Override
+    public PagingResponseDto<CouponResponseDto> getCoupons(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Pageable pageable = PageableUtils.getPageable(pageNo, pageSize, sortBy, sortDir);
+        Page<Coupon> coupons = couponRepository.findByKeyword(searchKey, pageable);
+        List<Coupon> listOfCoupons = coupons.getContent();
+        List<CouponResponseDto> content = listOfCoupons.stream().map(couponMapper::mapToDto).collect(Collectors.toList());
+        return new PagingResponseDto<>(coupons, content);
+    }
+
+    @Override
+    public Object updateCoupon(Long id, CouponRequestDto couponRequestDto) {
+        Coupon coupon = getCoupon(id);
+        couponMapper.mapToEntity(coupon, couponRequestDto);
+        return couponMapper.mapToDto(couponRepository.save(coupon));
+    }
+
+    @Override
+    public void deleteCoupon(Long id) {
+        Coupon coupon = getCoupon(id);
+        couponRepository.delete(coupon);
+    }
+
+
+    private Coupon getCoupon(Long id) {
+        return couponRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Coupon", id));
+    }
+
+    private void calculateDiscount(CouponApplyRequestDto couponApplyRequestDto, Coupon coupon, CouponApplyResponseDto couponApplyResponseDto) {
         double discountPercentage = (double) coupon.getDiscountPercentage() / 100;
-        double updatedAmount = couponRequestDto.getTotalAmount() - (discountPercentage * couponRequestDto.getTotalAmount());
-        couponResponseDto.setDiscountAmount(updatedAmount);
+        double updatedAmount = couponApplyRequestDto.getTotalAmount() - (discountPercentage * couponApplyRequestDto.getTotalAmount());
+        couponApplyResponseDto.setDiscountAmount(updatedAmount);
     }
 
     private Pair<Boolean, String> checkConditionMeet(List<GenericCondition> conditions) {
@@ -96,16 +126,16 @@ public class CouponServiceImpl implements CouponService {
         return genericConditions;
     }
 
-    private Map<Attribute, Object> getConditionAttributeMap(CouponRequestDto couponRequestDto) {
+    private Map<Attribute, Object> getConditionAttributeMap(CouponApplyRequestDto couponApplyRequestDto) {
         Map<Attribute, Object> attributeMap = new HashMap<>();
-        attributeMap.put(Attribute.TOTAL_AMOUNT, couponRequestDto.getTotalAmount());
+        attributeMap.put(Attribute.TOTAL_AMOUNT, couponApplyRequestDto.getTotalAmount());
         attributeMap.put(Attribute.PURCHASE_DATE, LocalDate.now());
-        attributeMap.put(Attribute.CATEGORIES, getProductCategories(couponRequestDto));
+        attributeMap.put(Attribute.CATEGORIES, getProductCategories(couponApplyRequestDto));
         return attributeMap;
     }
 
-    private String[] getProductCategories(CouponRequestDto couponRequestDto) {
-        List<Long> productIds = couponRequestDto.getCartItems().stream().map(CartItemDTO::getProductId).toList();
+    private String[] getProductCategories(CouponApplyRequestDto couponApplyRequestDto) {
+        List<Long> productIds = couponApplyRequestDto.getCartItems().stream().map(CartItemDTO::getProductId).toList();
         List<Product> products = productRepository.findByIds(productIds);
         if (products.size() != productIds.size()) {
             throw new BadRequestException("Invalid cart items");

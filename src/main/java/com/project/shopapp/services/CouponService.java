@@ -1,18 +1,25 @@
 package com.project.shopapp.services;
 
-import com.project.shopapp.dtos.requests.CouponCreateDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
-import com.project.shopapp.dtos.responses.AttributeResponseDto;
-import com.project.shopapp.dtos.responses.CouponResponseDto;
+import com.project.shopapp.dtos.requests.CouponApplyRequestDto;
+import com.project.shopapp.dtos.responses.*;
 
 import java.util.List;
 
 public interface CouponService {
-    CouponResponseDto applyCoupon(CouponRequestDto couponRequestDto);
+    CouponApplyResponseDto applyCoupon(CouponApplyRequestDto couponApplyRequestDto);
 
-    void createCoupon(CouponCreateDto couponCreateDto);
+    CouponResponseDto createCoupon(CouponRequestDto couponRequestDto);
 
     List<AttributeResponseDto> getAttributes();
 
     List<String> getOperators();
+
+    CouponResponseDto getCouponById(Long id);
+
+    PagingResponseDto<CouponResponseDto> getCoupons(String searchKey, int pageNo, int pageSize, String sortBy, String sortDir);
+
+    Object updateCoupon(Long id, CouponRequestDto couponRequestDto);
+
+    void deleteCoupon(Long id);
 }

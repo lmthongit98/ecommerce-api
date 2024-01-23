@@ -1,9 +1,11 @@
 package com.project.shopapp.dtos.responses;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public record ApiErrorResponse(
-//        @Schema(description = "Error code")
+        @Schema(description = "Error code")
         int errorCode,
-//        @Schema(description = "Error description")
+        @Schema(description = "Error description")
         String description) {
 
 }

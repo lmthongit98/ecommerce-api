@@ -18,7 +18,7 @@ public abstract class BaseDateCondition extends BaseCondition {
         }
         this.attributeValue = (LocalDate) attributeValue;
         String[] rangeDateStr = value.split(";");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         this.fromDate = LocalDate.parse(rangeDateStr[0], formatter);
         this.toDate = LocalDate.parse(rangeDateStr[1], formatter);
     }

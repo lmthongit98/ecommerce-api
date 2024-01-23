@@ -36,7 +36,7 @@ public class ValidateUtils {
     }
 
     public boolean isValidDate(String input) {
-        String regex = "\\d{4}-\\d{2}-\\d{2};\\d{4}-\\d{2}-\\d{2}";
+        String regex = "\\d{2}-\\d{2}-\\d{4};\\d{2}-\\d{2}-\\d{4}";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);
         return matcher.matches();
