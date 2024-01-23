@@ -1,6 +1,6 @@
 package com.project.shopapp.models;
 
-import com.project.shopapp.enums.AttributeType;
+import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.enums.Operator;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,11 +13,8 @@ import lombok.Setter;
 public class CouponCondition extends BaseEntity {
 
     @Column(name = "attribute", nullable = false)
-    private String attribute;
-
-    @Column(name = "attribute_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private AttributeType attributeType;
+    private Attribute attribute;
 
     @Column(name = "operator")
     @Enumerated(EnumType.STRING)

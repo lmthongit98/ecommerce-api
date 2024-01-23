@@ -1,14 +1,12 @@
 package com.project.shopapp.dtos.coupon.conditions.impl;
 
-import com.project.shopapp.enums.AttributeType;
 import com.project.shopapp.dtos.coupon.conditions.BaseNumberCondition;
-
-import java.util.Map;
+import com.project.shopapp.enums.Attribute;
 
 public class GreaterThanOrEqualCondition extends BaseNumberCondition {
 
-    public GreaterThanOrEqualCondition(String attribute, AttributeType attributeType, String value, Map<String, Object> attributeValueMap) {
-        super(attribute, attributeType, value, attributeValueMap);
+    public GreaterThanOrEqualCondition(Attribute attribute, String value, Object attributeValue) {
+        super(attribute, value, attributeValue);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.project.shopapp.dtos.requests.CartItemDTO;
 import com.project.shopapp.dtos.requests.CouponCreateDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
 import com.project.shopapp.dtos.responses.CouponResponseDto;
+import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.CouponMapper;
@@ -41,7 +42,7 @@ public class CouponServiceImpl implements CouponService {
             throw new BadRequestException("Coupon is expired!");
         }
         Set<CouponCondition> couponConditions = coupon.getCouponConditions();
-        Map<String, Object> attributeMap = getConditionAttributeMap(couponRequestDto);
+        Map<Attribute, Object> attributeMap = getConditionAttributeMap(couponRequestDto);
         List<GenericCondition> conditions = getConditions(couponConditions, attributeMap);
         Pair<Boolean, String> conditionMeet = checkConditionMeet(conditions);
         if (!conditionMeet.getFirst()) {
@@ -71,20 +72,21 @@ public class CouponServiceImpl implements CouponService {
         return Pair.of(true, "");
     }
 
-    private List<GenericCondition> getConditions(Set<CouponCondition> couponConditions, Map<String, Object> attributeMap) {
+    private List<GenericCondition> getConditions(Set<CouponCondition> couponConditions, Map<Attribute, Object> attributeMap) {
         List<GenericCondition> genericConditions = new ArrayList<>();
         for (CouponCondition couponCondition : couponConditions) {
-            GenericCondition condition = CouponConditionFactory.createCouponCondition(couponCondition, attributeMap);
+            Object attributeValue = attributeMap.get(couponCondition.getAttribute());
+            GenericCondition condition = CouponConditionFactory.createCouponCondition(couponCondition, attributeValue);
             genericConditions.add(condition);
         }
         return genericConditions;
     }
 
-    private Map<String, Object> getConditionAttributeMap(CouponRequestDto couponRequestDto) {
-        Map<String, Object> attributeMap = new HashMap<>();
-        attributeMap.put("total_amount", couponRequestDto.getTotalAmount());
-        attributeMap.put("purchase_date", LocalDate.now());
-        attributeMap.put("categories", getProductCategories(couponRequestDto));
+    private Map<Attribute, Object> getConditionAttributeMap(CouponRequestDto couponRequestDto) {
+        Map<Attribute, Object> attributeMap = new HashMap<>();
+        attributeMap.put(Attribute.TOTAL_AMOUNT, couponRequestDto.getTotalAmount());
+        attributeMap.put(Attribute.PURCHASE_DATE, LocalDate.now());
+        attributeMap.put(Attribute.CATEGORIES, getProductCategories(couponRequestDto));
         return attributeMap;
     }
 

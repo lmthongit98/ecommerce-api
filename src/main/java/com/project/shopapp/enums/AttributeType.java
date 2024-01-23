@@ -15,7 +15,7 @@ public enum AttributeType {
     STRING {
         @Override
         public boolean isValid(String requiredValue, Object actualValue) {
-            return StringUtils.hasText(requiredValue) && StringUtils.hasText(actualValue.toString());
+            return StringUtils.hasText(requiredValue) && actualValue instanceof String[];
         }
     },
     DATE {
