@@ -3,8 +3,10 @@ package com.project.shopapp.services.impl;
 import com.project.shopapp.dtos.requests.CartItemDTO;
 import com.project.shopapp.dtos.requests.CouponCreateDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
+import com.project.shopapp.dtos.responses.AttributeResponseDto;
 import com.project.shopapp.dtos.responses.CouponResponseDto;
 import com.project.shopapp.enums.Attribute;
+import com.project.shopapp.enums.Operator;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.CouponMapper;
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,6 +59,16 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void createCoupon(CouponCreateDto couponCreateDto) {
         couponRepository.save(couponMapper.mapToEntity(couponCreateDto));
+    }
+
+    @Override
+    public List<AttributeResponseDto> getAttributes() {
+        return Arrays.stream(Attribute.values()).map(attribute -> new AttributeResponseDto(attribute.name(), attribute.getName())).toList();
+    }
+
+    @Override
+    public List<String> getOperators() {
+        return Arrays.stream(Operator.values()).map(Enum::name).toList();
     }
 
     private void calculateDiscount(CouponRequestDto couponRequestDto, Coupon coupon, CouponResponseDto couponResponseDto) {

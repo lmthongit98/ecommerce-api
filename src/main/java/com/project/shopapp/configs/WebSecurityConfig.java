@@ -83,6 +83,8 @@ public class WebSecurityConfig {
 
                                 .requestMatchers(HttpMethod.GET,
                                         String.format("%s/order_details/**", apiPrefix)).permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        String.format("%s/coupons/**", apiPrefix)).permitAll()
 
                                 .anyRequest()
                                 .authenticated())

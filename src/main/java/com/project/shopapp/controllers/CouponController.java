@@ -6,10 +6,7 @@ import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.services.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/coupons")
@@ -29,5 +26,16 @@ public class CouponController {
         couponService.createCoupon(couponCreateDto);
         return ResponseEntity.ok(GenericResponse.empty());
     }
+
+    @GetMapping("/attributes")
+    public ResponseEntity<?> getAttributes() {
+        return ResponseEntity.ok(GenericResponse.success(couponService.getAttributes()));
+    }
+
+    @GetMapping("/operators")
+    public ResponseEntity<?> getOperators() {
+        return ResponseEntity.ok(GenericResponse.success(couponService.getOperators()));
+    }
+
 
 }
