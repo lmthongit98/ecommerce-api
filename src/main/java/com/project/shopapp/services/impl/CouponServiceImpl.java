@@ -1,10 +1,12 @@
 package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.requests.CartItemDTO;
+import com.project.shopapp.dtos.requests.CouponCreateDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
 import com.project.shopapp.dtos.responses.CouponResponseDto;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
+import com.project.shopapp.mappers.CouponMapper;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.models.Coupon;
 import com.project.shopapp.models.CouponCondition;
@@ -29,11 +31,12 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final ProductRepository productRepository;
+    private final CouponMapper couponMapper;
 
     @Override
     public CouponResponseDto applyCoupon(CouponRequestDto couponRequestDto) {
         CouponResponseDto couponResponseDto = new CouponResponseDto();
-        Coupon coupon = couponRepository.findByCode(couponRequestDto.getCouponCode()).orElseThrow(() -> new ResourceNotFoundException("Coupon is not valid: " + couponRequestDto.getCouponCode()));
+        Coupon coupon = couponRepository.findByCodeAndActive(couponRequestDto.getCouponCode(), true).orElseThrow(() -> new ResourceNotFoundException("Coupon is not valid: " + couponRequestDto.getCouponCode()));
         if (coupon.isExpired()) {
             throw new BadRequestException("Coupon is expired!");
         }
@@ -46,6 +49,11 @@ public class CouponServiceImpl implements CouponService {
         }
         calculateDiscount(couponRequestDto, coupon, couponResponseDto);
         return couponResponseDto;
+    }
+
+    @Override
+    public void createCoupon(CouponCreateDto couponCreateDto) {
+        couponRepository.save(couponMapper.mapToEntity(couponCreateDto));
     }
 
     private void calculateDiscount(CouponRequestDto couponRequestDto, Coupon coupon, CouponResponseDto couponResponseDto) {

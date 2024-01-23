@@ -1,9 +1,6 @@
 package com.project.shopapp.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +23,10 @@ public class Coupon extends BaseEntity {
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
-    @OneToMany(mappedBy = "coupon")
+    @Column(name = "active", nullable = false)
+    private Boolean active = Boolean.TRUE;
+
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL)
     private Set<CouponCondition> couponConditions = new HashSet<>();
 
     public boolean isExpired() {

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class CouponCondition extends BaseEntity {
 
-    @Column(name = "attribute", unique = true, nullable = false)
+    @Column(name = "attribute", nullable = false)
     private String attribute;
 
     @Column(name = "attribute_type", nullable = false)
@@ -25,9 +25,6 @@ public class CouponCondition extends BaseEntity {
 
     @Column(name = "value")
     private String value;
-
-    @Column(name = "condtion_group")
-    private Integer conditionGroup; // OR (different group) - AND (same group)
 
     @JoinColumn(name = "coupon_id")
     @ManyToOne(fetch = FetchType.LAZY)

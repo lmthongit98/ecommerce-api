@@ -36,7 +36,7 @@ spring:
             required: true
 
 jwt:
-  jwt-expiration-milliseconds: 60000 # 1 minutes =  60 * 1000
+  jwt-expiration-milliseconds: 300000 # 5 minutes =  5 * 60 * 1000
   expiration-refresh-token-milliseconds: 5184000000 #60 days = 60 * 24 * 60 * 60 * 1000
   secretKey: TaqlmGv1iEDMRiFp/pHuID1+T84IABfuA0xXh4GhiUI=
 
