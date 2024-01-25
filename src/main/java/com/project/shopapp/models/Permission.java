@@ -1,6 +1,7 @@
 package com.project.shopapp.models;
 
 import com.project.shopapp.enums.HttpMethods;
+import com.project.shopapp.enums.Module;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,15 +19,19 @@ import java.util.Set;
 @NoArgsConstructor
 public class Permission extends BaseEntity {
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "method")
+    @Column(name = "method", nullable = false)
     @Enumerated(EnumType.STRING)
     private HttpMethods method;
 
-    @Column(name = "path")
+    @Column(name = "path", nullable = false)
     private String path;
+
+    @Column(name = "module")
+    @Enumerated(EnumType.STRING)
+    private Module module;
 
     @ManyToMany(mappedBy = "permissions")
     private Set<Role> roles = new HashSet<>();

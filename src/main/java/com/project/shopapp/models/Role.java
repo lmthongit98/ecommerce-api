@@ -20,6 +20,12 @@ public class Role extends BaseEntity {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "active", nullable = false)
+    private boolean active;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "roles_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
