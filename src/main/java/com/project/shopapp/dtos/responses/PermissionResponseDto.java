@@ -8,8 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PermissionResponseDto {
+    private Long id;
     private String name;
     private String path;
     private HttpMethods method;
     private Module module;
+    private Boolean enabled = Boolean.TRUE;
 }
