@@ -35,4 +35,10 @@ public class RoleController {
         return ResponseEntity.ok(roleResponseDto);
     }
 
+    @PostMapping
+    public ResponseEntity<RoleResponseDto> createRole(@RequestBody RoleRequestDto roleRequestDto) {
+        var roleResponseDto = roleService.createRole(roleRequestDto);
+        return ResponseEntity.ok(roleResponseDto);
+    }
+
 }

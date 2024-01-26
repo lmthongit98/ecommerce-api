@@ -48,6 +48,12 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.mapToDto(updatedRole, getAllPermissions());
     }
 
+    @Override
+    public RoleResponseDto createRole(RoleRequestDto roleRequestDto) {
+        Role role = roleMapper.mapToEntity(roleRequestDto, getAllPermissions());
+        return roleMapper.mapToDto(roleRepository.save(role), getAllPermissions());
+    }
+
     private void updateRolePermissions(RoleRequestDto roleRequestDto, Role role) {
         for (var permissionRequestDto : roleRequestDto.getPermissions()) {
             Permission permission = permissionRepository.findById(permissionRequestDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Permission", permissionRequestDto.getId()));
