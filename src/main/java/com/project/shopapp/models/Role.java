@@ -2,6 +2,7 @@ package com.project.shopapp.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,13 +35,23 @@ public class Role extends BaseEntity {
     public static String USER = "USER";
 
     public void addPermission(Permission permission) {
-        this.permissions.add(permission);
-        permission.getRoles().add(this);
+        if (CollectionUtils.isEmpty(this.permissions)) {
+            this.permissions = new HashSet<>();
+        }
+        if (!this.permissions.contains(permission)) {
+            this.permissions.add(permission);
+            permission.getRoles().add(this);
+        }
     }
 
     public void removePermission(Permission permission) {
-        this.permissions.remove(permission);
-        permission.getRoles().remove(this);
+        if (CollectionUtils.isEmpty(this.permissions)) {
+            return;
+        }
+        if (this.permissions.contains(permission)) {
+            this.permissions.remove(permission);
+            permission.getRoles().remove(this);
+        }
     }
 
 }

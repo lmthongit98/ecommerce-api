@@ -1,7 +1,9 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.requests.RoleRequestDto;
+import com.project.shopapp.dtos.responses.PermissionResponseDto;
 import com.project.shopapp.dtos.responses.RoleResponseDto;
+import com.project.shopapp.enums.Module;
 import com.project.shopapp.services.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/roles")
@@ -45,6 +48,12 @@ public class RoleController {
     public ResponseEntity<Void> deleteRoleById(@PathVariable Long id) {
         roleService.deleteRoleById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/permissions")
+    public ResponseEntity<?> getAllPermissions() {
+        var modulePermissionMap = roleService.getModulePermissionMap();
+        return ResponseEntity.ok(modulePermissionMap);
     }
 
 }

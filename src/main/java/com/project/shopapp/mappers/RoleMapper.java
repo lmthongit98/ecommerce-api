@@ -13,6 +13,7 @@ import com.project.shopapp.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,6 +52,7 @@ public class RoleMapper {
                 .name(roleRequestDto.getName())
                 .description(roleRequestDto.getDescription())
                 .active(roleRequestDto.isActive())
+                .permissions(new HashSet<>())
                 .build();
         var permissionMap = permissions.stream().collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
         for (var permissionRequestDto : roleRequestDto.getPermissions()) {

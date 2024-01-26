@@ -1,7 +1,9 @@
 package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.requests.RoleRequestDto;
+import com.project.shopapp.dtos.responses.PermissionResponseDto;
 import com.project.shopapp.dtos.responses.RoleResponseDto;
+import com.project.shopapp.enums.Module;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.RoleMapper;
 import com.project.shopapp.models.Permission;
@@ -9,10 +11,12 @@ import com.project.shopapp.models.Role;
 import com.project.shopapp.repositories.PermissionRepository;
 import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.services.RoleService;
+import com.project.shopapp.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +26,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RoleMapper roleMapper;
+    private final ObjectMapperUtils objectMapperUtils;
 
     @Override
     public List<RoleResponseDto> getRoles() {
@@ -58,6 +63,14 @@ public class RoleServiceImpl implements RoleService {
     public void deleteRoleById(Long id) {
         Role role = getRole(id);
         roleRepository.delete(role);
+    }
+
+    @Override
+    public Map<Module, List<PermissionResponseDto>> getModulePermissionMap() {
+        var permissions = getAllPermissions();
+        var permissionsResponse = objectMapperUtils.mapAll(permissions, PermissionResponseDto.class);
+        permissionsResponse.forEach(p -> p.setEnabled(false));
+        return permissionsResponse.stream().collect(Collectors.groupingBy(PermissionResponseDto::getModule));
     }
 
     private void updateRolePermissions(RoleRequestDto roleRequestDto, Role role) {
