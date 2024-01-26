@@ -1,13 +1,11 @@
 package com.project.shopapp.controllers;
 
+import com.project.shopapp.dtos.requests.RoleRequestDto;
 import com.project.shopapp.dtos.responses.RoleResponseDto;
 import com.project.shopapp.services.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,15 +18,21 @@ public class RoleController {
 
 
     @GetMapping
-    public ResponseEntity<?> getRoles() {
-        List<RoleResponseDto> roles = roleService.getRoles();
-        return ResponseEntity.ok(roles);
+    public ResponseEntity<List<RoleResponseDto>> getRoles() {
+        var roleResponseDtoList = roleService.getRoles();
+        return ResponseEntity.ok(roleResponseDtoList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRoleById(@PathVariable Long id) {
-        RoleResponseDto role = roleService.getRoleById(id);
-        return ResponseEntity.ok(role);
+    public ResponseEntity<RoleResponseDto> getRoleById(@PathVariable Long id) {
+        var roleResponseDto = roleService.getRoleById(id);
+        return ResponseEntity.ok(roleResponseDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RoleResponseDto> updateRoleById(@PathVariable Long id, @RequestBody RoleRequestDto roleRequestDto) {
+        var roleResponseDto = roleService.updateRoleById(id, roleRequestDto);
+        return ResponseEntity.ok(roleResponseDto);
     }
 
 }

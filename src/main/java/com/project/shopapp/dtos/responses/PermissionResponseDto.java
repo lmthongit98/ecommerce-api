@@ -13,5 +13,5 @@ public class PermissionResponseDto {
     private String path;
     private HttpMethods method;
     private Module module;
-    private Boolean enabled = Boolean.TRUE;
+    private boolean enabled = true;
 }

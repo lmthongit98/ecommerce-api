@@ -1,6 +1,6 @@
 package com.project.shopapp.services.impl;
 
-import com.project.shopapp.dtos.responses.PermissionResponseDto;
+import com.project.shopapp.dtos.requests.RoleRequestDto;
 import com.project.shopapp.dtos.responses.RoleResponseDto;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.RoleMapper;
@@ -26,15 +26,46 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleResponseDto> getRoles() {
         List<Role> roles = roleRepository.findAll();
-        List<Permission> permissions = permissionRepository.findAll();
+        List<Permission> permissions = getAllPermissions();
         return roles.stream().map(p -> roleMapper.mapToDto(p, permissions)).collect(Collectors.toList());
     }
 
     @Override
     public RoleResponseDto getRoleById(Long id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role", id));
-        List<Permission> permissions = permissionRepository.findAll();
+        Role role = getRole(id);
+        List<Permission> permissions = getAllPermissions();
         return roleMapper.mapToDto(role, permissions);
     }
+
+    @Override
+    public RoleResponseDto updateRoleById(Long id, RoleRequestDto roleRequestDto) {
+        Role role = getRole(id);
+        role.setName(roleRequestDto.getName());
+        role.setDescription(roleRequestDto.getDescription());
+        role.setActive(roleRequestDto.isActive());
+        updateRolePermissions(roleRequestDto, role);
+        Role updatedRole = roleRepository.save(role);
+        return roleMapper.mapToDto(updatedRole, getAllPermissions());
+    }
+
+    private void updateRolePermissions(RoleRequestDto roleRequestDto, Role role) {
+        for (var permissionRequestDto : roleRequestDto.getPermissions()) {
+            Permission permission = permissionRepository.findById(permissionRequestDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Permission", permissionRequestDto.getId()));
+            if (permissionRequestDto.isEnabled()) {
+                role.addPermission(permission);
+                continue;
+            }
+            role.removePermission(permission);
+        }
+    }
+
+    private Role getRole(Long id) {
+        return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role", id));
+    }
+
+    private List<Permission> getAllPermissions() {
+        return permissionRepository.findAll();
+    }
+
 
 }
