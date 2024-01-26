@@ -2,10 +2,10 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.requests.CategoryRequestDto;
 import com.project.shopapp.dtos.responses.CategoryResponseDto;
-import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.services.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,9 +43,9 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCategoryById(@PathVariable("id") Long categoryId) {
+    public ResponseEntity<Void> deleteCategoryById(@PathVariable("id") Long categoryId) {
         categoryService.deleteCategoryById(categoryId);
-        return ResponseEntity.ok(GenericResponse.empty());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

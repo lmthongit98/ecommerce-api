@@ -3,7 +3,6 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.OrderRequestDto;
 import com.project.shopapp.dtos.requests.PaymentRequestDto;
-import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.dtos.responses.OrderResponseDto;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.services.OrderService;
@@ -12,6 +11,7 @@ import com.stripe.model.PaymentIntent;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,9 +71,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
-        return ResponseEntity.ok(GenericResponse.empty());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -13,4 +13,6 @@ public interface RoleService {
     RoleResponseDto updateRoleById(Long id, RoleRequestDto roleRequestDto);
 
     RoleResponseDto createRole(RoleRequestDto roleRequestDto);
+
+    void deleteRoleById(Long id);
 }

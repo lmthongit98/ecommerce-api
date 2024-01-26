@@ -4,6 +4,7 @@ import com.project.shopapp.dtos.requests.RoleRequestDto;
 import com.project.shopapp.dtos.responses.RoleResponseDto;
 import com.project.shopapp.services.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,6 @@ import java.util.List;
 public class RoleController {
 
     private final RoleService roleService;
-
 
     @GetMapping
     public ResponseEntity<List<RoleResponseDto>> getRoles() {
@@ -39,6 +39,12 @@ public class RoleController {
     public ResponseEntity<RoleResponseDto> createRole(@RequestBody RoleRequestDto roleRequestDto) {
         var roleResponseDto = roleService.createRole(roleRequestDto);
         return ResponseEntity.ok(roleResponseDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRoleById(@PathVariable Long id) {
+        roleService.deleteRoleById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

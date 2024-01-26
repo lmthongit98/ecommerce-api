@@ -3,13 +3,13 @@ package com.project.shopapp.controllers;
 import com.github.javafaker.Faker;
 import com.project.shopapp.constants.AppConstants;
 import com.project.shopapp.dtos.requests.ProductRequestDto;
-import com.project.shopapp.dtos.responses.GenericResponse;
 import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.dtos.responses.ProductResponseDto;
 import com.project.shopapp.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,9 +70,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteItemById(@PathVariable("id") Long productId) {
+    public ResponseEntity<Void> deleteItemById(@PathVariable("id") Long productId) {
         productService.deleteProductById(productId);
-        return ResponseEntity.ok(GenericResponse.empty());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/by-ids")

@@ -6,6 +6,7 @@ import com.project.shopapp.dtos.requests.CouponRequestDto;
 import com.project.shopapp.services.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,9 +44,9 @@ public class CouponController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCoupon(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCoupon(@PathVariable Long id) {
         couponService.deleteCoupon(id);
-        return ResponseEntity.ok(HttpEntity.EMPTY);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/attributes")

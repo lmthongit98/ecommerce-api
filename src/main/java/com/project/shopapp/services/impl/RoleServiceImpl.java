@@ -54,6 +54,12 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.mapToDto(roleRepository.save(role), getAllPermissions());
     }
 
+    @Override
+    public void deleteRoleById(Long id) {
+        Role role = getRole(id);
+        roleRepository.delete(role);
+    }
+
     private void updateRolePermissions(RoleRequestDto roleRequestDto, Role role) {
         for (var permissionRequestDto : roleRequestDto.getPermissions()) {
             Permission permission = permissionRepository.findById(permissionRequestDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Permission", permissionRequestDto.getId()));
