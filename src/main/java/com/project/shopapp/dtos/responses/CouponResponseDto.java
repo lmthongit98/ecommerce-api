@@ -1,6 +1,7 @@
 package com.project.shopapp.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.dtos.requests.CouponConditionDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +18,6 @@ public class CouponResponseDto {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate expiryDate;
     private boolean active;
+    @JsonProperty("conditions")
     private Set<CouponConditionDto> couponConditions;
 }
