@@ -2,10 +2,12 @@ package com.project.shopapp.dtos.coupon.conditions;
 
 import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.enums.AttributeType;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@Getter
 public abstract class BaseDateCondition extends BaseCondition {
     protected final LocalDate fromDate;
     protected final LocalDate toDate;

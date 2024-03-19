@@ -1,6 +1,7 @@
 package com.project.shopapp.dtos.coupon.conditions.impl;
 
 import com.project.shopapp.dtos.coupon.conditions.BaseNumberCondition;
+import com.project.shopapp.dtos.coupon.visitors.ConditionVisitor;
 import com.project.shopapp.enums.Attribute;
 
 public class GreaterThanCondition extends BaseNumberCondition {
@@ -10,13 +11,8 @@ public class GreaterThanCondition extends BaseNumberCondition {
     }
 
     @Override
-    public boolean isConditionMeet() {
-        return attributeValue > requiredValue;
-    }
-
-    @Override
-    public String getInvalidMessage() {
-        return String.format("%s must be > %.2f", attribute, requiredValue);
+    public void accept(ConditionVisitor visitor) {
+        visitor.visit(this);
     }
 
 }

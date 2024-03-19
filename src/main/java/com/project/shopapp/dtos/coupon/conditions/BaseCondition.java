@@ -2,7 +2,9 @@ package com.project.shopapp.dtos.coupon.conditions;
 
 import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.enums.AttributeType;
+import lombok.Getter;
 
+@Getter
 public abstract class BaseCondition implements GenericCondition {
 
     protected final Attribute attribute;

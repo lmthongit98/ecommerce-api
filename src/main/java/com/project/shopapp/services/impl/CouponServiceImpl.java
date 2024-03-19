@@ -1,20 +1,27 @@
 package com.project.shopapp.services.impl;
 
+import com.project.shopapp.dtos.coupon.CouponConditionFactory;
+import com.project.shopapp.dtos.coupon.conditions.GenericCondition;
+import com.project.shopapp.dtos.coupon.visitors.impl.ConditionMeetVisitor;
 import com.project.shopapp.dtos.requests.CartItemDTO;
-import com.project.shopapp.dtos.requests.CouponRequestDto;
 import com.project.shopapp.dtos.requests.CouponApplyRequestDto;
-import com.project.shopapp.dtos.responses.*;
+import com.project.shopapp.dtos.requests.CouponRequestDto;
+import com.project.shopapp.dtos.responses.AttributeResponseDto;
+import com.project.shopapp.dtos.responses.CouponApplyResponseDto;
+import com.project.shopapp.dtos.responses.CouponResponseDto;
+import com.project.shopapp.dtos.responses.PagingResponseDto;
 import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.enums.Operator;
 import com.project.shopapp.exceptions.BadRequestException;
 import com.project.shopapp.exceptions.ResourceNotFoundException;
 import com.project.shopapp.mappers.CouponMapper;
-import com.project.shopapp.models.*;
+import com.project.shopapp.models.Category;
+import com.project.shopapp.models.Coupon;
+import com.project.shopapp.models.CouponCondition;
+import com.project.shopapp.models.Product;
 import com.project.shopapp.repositories.CouponRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.services.CouponService;
-import com.project.shopapp.dtos.coupon.CouponConditionFactory;
-import com.project.shopapp.dtos.coupon.conditions.GenericCondition;
 import com.project.shopapp.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,12 +115,11 @@ public class CouponServiceImpl implements CouponService {
     }
 
     private Pair<Boolean, String> checkConditionMeet(List<GenericCondition> conditions) {
+        ConditionMeetVisitor visitor = new ConditionMeetVisitor();
         for (GenericCondition condition : conditions) {
-            if (!condition.isConditionMeet()) {
-                return Pair.of(false, condition.getInvalidMessage());
-            }
+            condition.accept(visitor);
         }
-        return Pair.of(true, "");
+        return Pair.of(visitor.isConditionMeet(), visitor.getUnsatisfiedMessages());
     }
 
     private List<GenericCondition> getConditions(Set<CouponCondition> couponConditions, Map<Attribute, Object> attributeMap) {

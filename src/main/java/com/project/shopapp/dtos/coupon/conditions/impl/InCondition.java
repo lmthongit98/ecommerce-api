@@ -1,13 +1,12 @@
 package com.project.shopapp.dtos.coupon.conditions.impl;
 
 import com.project.shopapp.dtos.coupon.conditions.BaseCondition;
+import com.project.shopapp.dtos.coupon.visitors.ConditionVisitor;
 import com.project.shopapp.enums.Attribute;
 import com.project.shopapp.enums.AttributeType;
+import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+@Getter
 public class InCondition extends BaseCondition {
 
     private final String[] requiredValues;
@@ -23,14 +22,8 @@ public class InCondition extends BaseCondition {
     }
 
     @Override
-    public boolean isConditionMeet() {
-        Set<String> requiredValuesSet = new HashSet<>(Arrays.asList(requiredValues));
-        return Arrays.stream(attributeValues).anyMatch(requiredValuesSet::contains);
-    }
-
-    @Override
-    public String getInvalidMessage() {
-        return String.format("%s must be one of %s", attribute, Arrays.toString(requiredValues));
+    public void accept(ConditionVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override

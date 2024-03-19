@@ -1,8 +1,11 @@
 package com.project.shopapp.dtos.coupon.conditions.impl;
 
 import com.project.shopapp.dtos.coupon.conditions.BaseDateCondition;
+import com.project.shopapp.dtos.coupon.visitors.ConditionVisitor;
 import com.project.shopapp.enums.Attribute;
+import lombok.Getter;
 
+@Getter
 public class BetweenDateCondition extends BaseDateCondition {
 
     public BetweenDateCondition(Attribute attribute, String value, Object attributeValue) {
@@ -10,16 +13,8 @@ public class BetweenDateCondition extends BaseDateCondition {
     }
 
     @Override
-    public boolean isConditionMeet() {
-        if (attributeValue.isEqual(fromDate) || attributeValue.isEqual(toDate)) {
-            return true;
-        }
-        return attributeValue.isAfter(fromDate) && attributeValue.isBefore(toDate);
-    }
-
-    @Override
-    public String getInvalidMessage() {
-        return String.format("%s must between %s and %s", attribute, fromDate.toString(), toDate.toString());
+    public void accept(ConditionVisitor visitor) {
+        visitor.visit(this);
     }
 
 }
