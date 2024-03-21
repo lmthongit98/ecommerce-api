@@ -2,7 +2,8 @@ package com.project.shopapp.services.impl;
 
 import com.project.shopapp.dtos.coupon.CouponConditionFactory;
 import com.project.shopapp.dtos.coupon.conditions.GenericCondition;
-import com.project.shopapp.dtos.coupon.visitors.impl.ConditionMeetVisitor;
+import com.project.shopapp.dtos.coupon.conditions.composites.AndComposite;
+import com.project.shopapp.dtos.coupon.visitors.impl.ConditionEvaluatorVisitor;
 import com.project.shopapp.dtos.requests.CartItemDTO;
 import com.project.shopapp.dtos.requests.CouponApplyRequestDto;
 import com.project.shopapp.dtos.requests.CouponRequestDto;
@@ -115,11 +116,10 @@ public class CouponServiceImpl implements CouponService {
     }
 
     private Pair<Boolean, String> checkConditionMeet(List<GenericCondition> conditions) {
-        ConditionMeetVisitor visitor = new ConditionMeetVisitor();
-        for (GenericCondition condition : conditions) {
-            condition.accept(visitor);
-        }
-        return Pair.of(visitor.isConditionMeet(), visitor.getUnsatisfiedMessages());
+        ConditionEvaluatorVisitor visitor = new ConditionEvaluatorVisitor();
+        AndComposite andComposite = new AndComposite(conditions);
+        andComposite.accept(visitor);
+        return Pair.of(visitor.isConditionMeet(), visitor.getUnsatisfiedMessages()); // todo: correct messages accordingly
     }
 
     private List<GenericCondition> getConditions(Set<CouponCondition> couponConditions, Map<Attribute, Object> attributeMap) {
